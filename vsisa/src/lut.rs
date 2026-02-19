@@ -9,8 +9,12 @@ static INSTRUCTION_LUT: phf::Map<&'static str, &'static str> = phf_map! {
     "div" => "00000004",
     "jmp" => "00000005",
     "jez" => "00000006",
-    "jgt" => "00000007",
+    "jgz" => "00000007",
     "nop" => "00000008",
+    "ladd" => "00000009",
+    "lsub" => "00000010",
+    "lmul" => "00000011",
+    "ldiv" => "00000012",
 };
 
 #[derive(PartialEq)]
@@ -28,10 +32,14 @@ static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3
     "sub" => &[AR::Reg, AR::Reg, AR::Reg],
     "mul" => &[AR::Reg, AR::Reg, AR::Reg],
     "div" => &[AR::Reg, AR::Reg, AR::Reg],
-    "jmp" => &[AR::Reg, AR::Empty, AR::Empty],
+    "jmp" => &[AR::Lit, AR::Empty, AR::Empty],
     "jez" => &[AR::Lit, AR::Reg, AR::Empty],
-    "jgt" => &[AR::Lit, AR::Reg, AR::Empty],
+    "jgz" => &[AR::Lit, AR::Reg, AR::Empty],
     "nop" => &[AR::Empty, AR::Empty, AR::Empty],
+    "ladd" => &[AR::Reg, AR::Reg, AR::Lit],
+    "lsub" => &[AR::Reg, AR::Reg, AR::Lit],
+    "lmul" => &[AR::Reg, AR::Reg, AR::Lit],
+    "ldiv" => &[AR::Reg, AR::Reg, AR::Lit],
 };
 
 /// Register translations
