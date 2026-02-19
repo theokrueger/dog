@@ -1,0 +1,5 @@
+/target
+\#*
+\~*
+*.save
+*.sync-conflict*

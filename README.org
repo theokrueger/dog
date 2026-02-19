@@ -1,0 +1,2 @@
+* dynamic opcode groupsizing
+a simple VLIW processing core mostly for fun

@@ -1,0 +1,19 @@
+// special
+WHITESPACE = _{ (" " | "\t")+ }
+SINGLE_LINE_COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* }
+BLOCK_COMMENT = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+COMMENT = _{ SINGLE_LINE_COMMENT | BLOCK_COMMENT }
+
+// atomics
+bin = @{ "0b" ~ ('0'..'1')+ } // 0b010100
+hex = @{ "0x" ~ (ASCII_DIGIT | 'a'..'f' | 'A'..'F' )+ } // 0xf0
+dec = @{ "0d" ~ ASCII_DIGIT+ } // 0d256
+literal = ${bin | hex | dec}
+
+reg = @{ "r" ~ ASCII_DIGIT+ } // r0, r1, etc
+label = @{ (ASCII_ALPHANUMERIC | "_")+ ~ ":" } // :LABEL
+instr = @{ ASCII_ALPHA{3} } // ADD, SUB, MUL, etc
+
+// file
+line = { (label | (instr ~ (reg | literal | label ){1,3}))? ~ NEWLINE }
+file = { SOI ~ line* ~ EOI }
