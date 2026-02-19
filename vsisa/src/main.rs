@@ -9,6 +9,7 @@ use clap::Parser as ClapParser;
 use pest::{Parser as PestParser, iterators::Pair};
 use std::{collections::HashMap, process};
 
+/// parse an entire asm file, loaded from user arguments
 fn main() {
     // setup
     let args = Args::parse();
@@ -37,6 +38,7 @@ fn main() {
     args.write(out);
 }
 
+/// Parse a single line and update global state
 fn parse_line(line: Pair<Rule>, out: &mut String, pc: &mut u8, labels: &mut HashMap<String, u8>) {
     let lstr = line.as_str().to_string();
     let mut inr = line.into_inner();
@@ -94,7 +96,7 @@ fn parse_line(line: Pair<Rule>, out: &mut String, pc: &mut u8, labels: &mut Hash
                 // literal
                 Rule::literal => {
                     let dec = match &field.as_str()[..2] {
-                        "0b" => 12,
+                        "0b" => 12, // TODO convert these :D
                         "0x" => 13,
                         "0d" => 14,
                         _ => unreachable!(),
@@ -115,7 +117,7 @@ fn parse_line(line: Pair<Rule>, out: &mut String, pc: &mut u8, labels: &mut Hash
             i += 1;
         }
 
-        // zero-pad
+        // add empty instructions. should have inverted the loop object but whatever
         while i < 4 {
             out.push_str("00000000");
             i += 1
@@ -136,6 +138,7 @@ fn parse_line(line: Pair<Rule>, out: &mut String, pc: &mut u8, labels: &mut Hash
 mod tests {
     use super::*;
 
+    // helper
     fn lazy_line(asm: &str) -> String {
         let mut out = String::with_capacity(256);
         let mut pc: u8 = 0; // program counter

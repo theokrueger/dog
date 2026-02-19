@@ -1,3 +1,4 @@
+///! pest-based parser for vsisa and other simple assemblies
 use pest::Parser;
 use pest_derive::Parser;
 

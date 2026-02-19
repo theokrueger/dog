@@ -1,5 +1,7 @@
+//! lookup table for translations of ISA stuff
 use phf::phf_map;
 
+/// Instruction translations
 static INSTRUCTION_LUT: phf::Map<&'static str, &'static str> = phf_map! {
     "add" => "00000001",
     "sub" => "00000002",
@@ -12,6 +14,7 @@ static INSTRUCTION_LUT: phf::Map<&'static str, &'static str> = phf_map! {
 };
 
 #[derive(PartialEq)]
+/// Restriction of arguments by type
 pub enum ArgRestrict {
     Empty,
     Reg,
@@ -19,6 +22,7 @@ pub enum ArgRestrict {
 }
 
 use self::ArgRestrict as AR;
+/// "Function prototype" for instruction mnemonics or however you spell it
 static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3]> = phf_map! {
     "add" => &[AR::Reg, AR::Reg, AR::Reg],
     "sub" => &[AR::Reg, AR::Reg, AR::Reg],
@@ -30,6 +34,7 @@ static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3
     "nop" => &[AR::Empty, AR::Empty, AR::Empty],
 };
 
+/// Register translations
 static REGISTER_LUT: phf::Map<&'static str, &'static str> = phf_map! {
     "r0" => "00000001",
     "r1" => "00000002",
@@ -72,12 +77,14 @@ mod tests {
     }
 
     #[test]
+    /// ensure no intersection of addresses between the opcodes. do the sam for addresses
     fn lut_no_dupes() {
         dupe_check!(INSTRUCTION_LUT, "opcode");
         dupe_check!(REGISTER_LUT, "address");
     }
 
     #[test]
+    /// ensure all opcodes have a "function prototype"
     fn lut_arg_has_restrict() {
         for (k1, _) in INSTRUCTION_LUT.entries() {
             println!("{k1}");
