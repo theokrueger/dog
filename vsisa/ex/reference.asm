@@ -18,7 +18,7 @@
         JMP  0x123     // jump to address of literal
         JEZ  0d12 r1   // jump to 0d12 if r1 == 0
         JGZ  0d12 r1   // jump to 0d12 if r1 > 0
-        NOP            // do nothing
+//        NOP            // do nothing
         LADD r0 r1 0x1 // r0 = r1 + 0x1
         LSUB r0 r1 0x1 // r0 = r1 - 0x1
         LMUL r0 r1 0x1 // r0 = r1 * 0x1
