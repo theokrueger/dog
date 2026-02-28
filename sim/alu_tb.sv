@@ -8,6 +8,7 @@ module alu_tb;
   reg [7:0] B;
   output [7:0] Y;
   output       Zero;
+  reg [7:0]   expt;
 
   alu dut (
         .Operation(Op),
@@ -17,52 +18,53 @@ module alu_tb;
         .Zero(Zero)
       );
 
-  // clock
-  reg clk;
+
   always
-    #1 clk = ~clk;   // Generate clock
-
-  // test infra
-  struct {
-      string name;
-      bit [3:0] op;
-      bit [7:0] a;
-      bit [7:0] b;
-      bit [7:0] expt;
-    } test;
-
-  task clear;
-    begin
-      Op = 8'b0;
-      A=8'b0;
-      B=8'b0;
-      Y_Expect = 8'b0;
-      test = {"none", b0, b0, b0, b0};
-    end
-  endtask // clear
-
-  task check;
-    begin
-      if (Y == Y_Expect)
-        begin
-        end
-      else
-        begin
-          $display("Failed ALU test case %s", test.name);
-          $stop;
-
-
-        end
-    end
-  endtask // check
-
+    #2  assert (Y == expt) else
+       begin
+         $display("Failed ALU test case from %d", $time-2);
+         $display("Output: %b", Y);
+         $stop;
+       end;
 
   // test cases
   initial
     begin
-      #0 clear;
+      #0
+       Op = 8'b0;
+      A=8'b0;
+      B=8'b0;
+      expt = 8'b0;
 
-      #25
+      // normal operation
+      #2
+       Op = ALU_ADD_OP;
+      A = 'b00000001;
+      B = 'b00000001;
+      expt = 'b00000010;
+
+      #4
+       Op = ALU_SUB_OP;
+      A = 'b00001000;
+      B = 'b00000010;
+      expt = 'b00000110;
+
+      #6
+       Op = ALU_AND_OP;
+      A =    'b11001100;
+      B =    'b01010101;
+      expt = 'b01000100;
+
+      #7
+       Op = ALU_AND_OP;
+      A =    'b11001100;
+      B =    'b01010101;
+      expt = 'b01000100;
+
+      // overflow/underflow
+
+      // done
+      #200
        begin
          $display("Completed ALU Test at %d",$time);
          $finish;

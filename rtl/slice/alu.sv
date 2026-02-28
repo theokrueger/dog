@@ -19,7 +19,7 @@ module alu(
           end
         ALU_SUB_OP:
           begin
-            Y = A + B;
+            Y = A - B;
           end
         ALU_MUL_OP:
           begin
@@ -32,6 +32,7 @@ module alu(
         ALU_AND_OP:
           begin
             Y = A & B;
+$display("%b %b %b", A, B, Y);
           end
         ALU_OR_OP:
           begin

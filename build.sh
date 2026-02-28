@@ -21,7 +21,7 @@ try() {
 try mkdir -p $OUT
 
 echo "Building..."
-try iverilog -gassertions -s "$ROOT_MOD" -o "$OUT/$ROOT_MOD" -c "$FLIST"
+try iverilog -g2012 -gassertions -s "$ROOT_MOD" -o "$OUT/$ROOT_MOD" -c "$FLIST"
 echo
 
 echo "Running..."
