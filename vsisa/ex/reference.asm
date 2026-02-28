@@ -14,6 +14,8 @@
         SUB  r0 r1 r2  // r0 = r1-r2
         MUL  r0 r1 r2  // r0 = r1*r2
         DIV  r0 r1 r2  // r0 = r1/r2
+        AND  r0 r1 r2  // r0 = r1&r2
+        OR   r0 r1 r3  // r0 = r1|r2
         JMP  label:    // jump to address of label
         JMP  0x123     // jump to address of literal
         JEZ  0d12 r1   // jump to 0d12 if r1 == 0
@@ -23,6 +25,8 @@
         LSUB r0 r1 0x1 // r0 = r1 - 0x1
         LMUL r0 r1 0x1 // r0 = r1 * 0x1
         LDIV r0 r1 0x1 // r0 = r1 / 0x1
+        LAND r0 r2 0x1 // r0 = r1 & 0x1
+        LOR  r0 r1 0x1 // r0 = r1 | 0x1
 
 
 label:  // this is a label

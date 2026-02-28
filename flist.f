@@ -1,2 +1,3 @@
-rtl/counter.v
-sim/testbench.v
+rtl/slice/alu.sv
+sim/alu_tb.sv
+sim/testbench.sv
