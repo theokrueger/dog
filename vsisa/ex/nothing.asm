@@ -5,5 +5,5 @@ label: // with comment
         SUB     r3      r3      r2
         JEZ     label2:  r3
         JGZ     0b001   r2
-label2: 
+label2:
         JEZ     label: r2
