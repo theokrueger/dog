@@ -8,7 +8,6 @@ module alu(
 `include "incl/ALU_Ops.svh"
 
   assign Zero = (Y == 8'b0);
-  $display("hihihiih");
 
   always @(Operation or A or B)
     begin
