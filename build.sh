@@ -6,9 +6,14 @@ cd "$(dirname $0)"
 
 OUT="$PWD/build"
 FLIST="$PWD/flist.f"
-ROOT_MOD="testbench"
+ROOT_MOD="testbench" # or first argument
 
 ###############################
+
+if [[ "$1" != "" ]]; then
+  echo "Setting mod to '$1'"
+  ROOT_MOD="$1"
+fi
 
 try() {
   $@

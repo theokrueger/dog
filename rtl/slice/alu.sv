@@ -32,7 +32,6 @@ module alu(
         ALU_AND_OP:
           begin
             Y = A & B;
-$display("%b %b %b", A, B, Y);
           end
         ALU_OR_OP:
           begin
