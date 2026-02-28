@@ -9,11 +9,13 @@ module counter(out, clk, reset);
   reg [WIDTH-1 : 0]   out;
   wire               clk, reset;
 
-  always @(posedge clk or posedge reset)
+  always @(posedge clk or posedge reset) begin
     if (reset)
       out <= 0;
     else
       out <= out + 1;
+    assert (0 == 0) else $error("hi");
+  end
 
 endmodule // counter
 
