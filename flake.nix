@@ -14,6 +14,7 @@
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
           pkgs.iverilog
+          pkgs.sv-lang
         ];
       };
     };
