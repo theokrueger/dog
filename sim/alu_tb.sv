@@ -74,7 +74,7 @@ module alu_tb;
              expt = 'b00000010;
          end;
 
-        #2
+        #1
          begin
              Op = ALU_SUB_OP;
              A = 'b00001000;
@@ -82,7 +82,7 @@ module alu_tb;
              expt = 'b00000110;
          end;
 
-        #3
+        #1
          begin
              Op = ALU_AND_OP;
              A =    'b11001100;
@@ -90,7 +90,7 @@ module alu_tb;
              expt = 'b01000100;
          end;
 
-        #4
+        #1
          begin
              Op = ALU_OR_OP;
              A =    'b11001100;
@@ -98,7 +98,7 @@ module alu_tb;
              expt = 'b11111101;
          end;
 
-        #5
+        #1
          begin
              Op =ALU_EQ_OP;
              A = 8'b101;
@@ -106,7 +106,7 @@ module alu_tb;
              expt = 8'b1;
          end;
 
-        #6
+        #1
          begin
              Op = ALU_EQ_OP;
              A = 8'b001;
@@ -114,7 +114,7 @@ module alu_tb;
              expt = 8'b0;
          end;
 
-        #7
+        #1
          begin
              Op =ALU_GT_OP;
              A = 8'b001;
@@ -122,7 +122,7 @@ module alu_tb;
              expt = 8'b0;
          end;
 
-        #8
+        #1
          begin
              Op = ALU_GT_OP;
              A = 8'b1000;
@@ -130,7 +130,7 @@ module alu_tb;
              expt = 8'b1;
          end;
 
-        #9
+        #1
          begin
              Op = ALU_GT_OP;
              A = 8'b101;
@@ -138,7 +138,7 @@ module alu_tb;
              expt = 8'b0;
          end;
 
-        #10
+        #1
          begin
              Op =ALU_GTE_OP;
              A = 8'b101;
@@ -146,7 +146,7 @@ module alu_tb;
              expt = 8'b1;
          end;
 
-        #11
+        #1
          begin
              Op = ALU_GTE_OP;
              A = 8'b1000;
@@ -154,7 +154,7 @@ module alu_tb;
              expt = 8'b1;
          end;
 
-        #12
+        #1
          begin
              Op = ALU_GTE_OP;
              A = 8'b001;
@@ -163,7 +163,7 @@ module alu_tb;
          end;
 
         // overflow/underflow
-        #100
+        #1
          begin
              Op = ALU_ADD_OP;
              A = 'b11111111;
@@ -171,7 +171,7 @@ module alu_tb;
              expt = 'b00000000; // TODO is overflow intended?
          end;
 
-        #101
+        #1
          begin
              Op = ALU_SUB_OP;
              A = 'b0;
@@ -179,7 +179,7 @@ module alu_tb;
              expt = 'b11111111;
          end;
 
-        #102
+        #1
          begin
              Op = ALU_SUB_OP;
              A = 'b0;
@@ -188,7 +188,7 @@ module alu_tb;
          end;
 
         // done
-        #200
+        #1
          begin
              $display("Completed ALU Test at %d",$time);
          end;

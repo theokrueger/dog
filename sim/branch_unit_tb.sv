@@ -57,7 +57,7 @@ module branch_unit_tb;
              PC=8'b01;
              expt = 8'b10;
          end;
-        #2
+        #1
          begin
              Op = BRANCH_ZERO_OP;
              Addr=8'b1111;
@@ -67,7 +67,7 @@ module branch_unit_tb;
              expt = 8'b1111;
          end;
 
-        #3
+        #1
          begin
              Op = BRANCH_NOTZERO_OP;
              Addr=8'b1111;
@@ -77,7 +77,7 @@ module branch_unit_tb;
              expt = 8'b1111;
          end;
 
-        #4
+        #1
          begin
              Op = BRANCH_NOTZERO_OP;
              Addr=8'b1111;
@@ -87,7 +87,7 @@ module branch_unit_tb;
              expt = 8'b11110001;
          end;
 
-        #5
+        #1
          begin
              Op = BRANCH_SUBOVERFLOW_OP;
              Addr=8'b10101;
@@ -97,7 +97,7 @@ module branch_unit_tb;
              expt = 8'b10101;
          end;
 
-        #5
+        #1
          begin
              Op = BRANCH_SUBOVERFLOW_OP;
              Addr=8'b10101;
@@ -109,7 +109,7 @@ module branch_unit_tb;
 
 
         // done
-        #100
+        #1
          begin
              $display("Completed branch_unit Test at %d",$time);
          end;

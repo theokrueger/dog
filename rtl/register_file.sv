@@ -1,4 +1,9 @@
-module register_file();
+
+module register_file #(parameter N=4) (
+   
+);
 
 
-endmodule; // register_file
+endmodule
+
+
