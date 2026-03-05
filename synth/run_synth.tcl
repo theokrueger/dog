@@ -1,5 +1,6 @@
-source setup_synth.tcl
-source constraints_synth.tcl
+set SD="./synth"
+source $SD/setup_synth.tcl
+source $SD/constraints_synth.tcl
 compile
-source reporting_synth.tcl
+source $SD/reporting_synth.tcl
 # exit
