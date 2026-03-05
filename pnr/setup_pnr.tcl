@@ -1,5 +1,3 @@
-set PNR_DIR ./pnr
-
 set init_lef_file [list $PNR_DIR/lib/gsclib045.lef]
 
 set init_verilog $PNR_DIR/netlist.v
