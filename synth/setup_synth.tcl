@@ -15,6 +15,7 @@ file mkdir $PNR_DIR
 set MOD_NAME alu
 
 # initialize link and synthetic libraries
+# is synthetic library global??? lol.
 set synthetic_library [list dw_foundation.sldb]
 set link_library [list $SYNTH_DIR/gpdk045_slow.db]
 set target_library $SYNTH_DIR/gpdk045_slow.db
