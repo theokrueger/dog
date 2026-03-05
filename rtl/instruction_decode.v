@@ -1,8 +1,5 @@
 module instruction_decode(
   
-) 
-endmodule
-
-
-
-
+                          );
+ 
+endmodule // instruction_decode
