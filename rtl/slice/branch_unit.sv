@@ -1,9 +1,9 @@
 module branch_unit(
-        input [1:0]  Operation,
-        input [7:0]  Address,
-        input [7:0]  PC,
-        input wire   Zero,
-        input wire   Sub_UF,
+        input [1:0]      Operation,
+        input [7:0]      Address,
+        input [7:0]      PC,
+        input wire       Zero,
+        input wire       Sub_UF,
         output reg [7:0] PC_out
     );
 `include "incl/Branch_Ops.svh"

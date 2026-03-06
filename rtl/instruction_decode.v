@@ -10,7 +10,7 @@ module instruction_decode #(parameter N=4) (
 
   assign branchaddr = word[7:0];
   assign branchop = word[9:8];
-  
+
   genvar i;
   generate
     for (i=0; i<N; i=i+1) begin
@@ -20,4 +20,4 @@ module instruction_decode #(parameter N=4) (
       assign ops[4*i +: 4] = word[34+28*i +: 4];
     end
   endgenerate
-endmodule
+endmodule // instruction_decode

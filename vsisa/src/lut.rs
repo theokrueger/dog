@@ -3,18 +3,18 @@ use phf::phf_map;
 
 /// Instruction translations
 static INSTRUCTION_LUT: phf::Map<&'static str, &'static str> = phf_map! {
-    "add" => "00000001",
-    "sub" => "00000002",
-    "mul" => "00000003",
-    "div" => "00000004",
-    "jmp" => "00000005",
-    "jez" => "00000006",
-    "jgz" => "00000007",
-    "nop" => "00000008",
-    "ladd" => "00000009",
-    "lsub" => "00000010",
-    "lmul" => "00000011",
-    "ldiv" => "00000012",
+    "nop" => "0000",
+    "add" => "0001",
+    "sub" => "0010",
+    "mul" => "0011",
+    "div" => "0100",
+    "jmp" => "0101",
+    "jez" => "0110",
+    "jgz" => "0111",
+    "ladd" => "1000",
+    "lsub" => "1001",
+    "lmul" => "1010",
+    "ldiv" => "1011",
 };
 
 #[derive(PartialEq)]

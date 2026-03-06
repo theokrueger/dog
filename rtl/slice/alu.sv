@@ -1,10 +1,10 @@
 module alu(
-        input [3:0]      Operation,
-        input [7:0]      A,
-        input [7:0]      B,
-        output reg [7:0] Y,
-        output wire      Zero,
-        output wire      Sub_UF
+           input [3:0]      Operation,
+           input [7:0]      A,
+           input [7:0]      B,
+           output reg [7:0] Y,
+           output wire      Zero,
+           output wire      Sub_UF
     );
 `include "incl/ALU_Ops.svh"
 
