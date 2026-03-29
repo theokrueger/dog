@@ -1,4 +1,5 @@
 module alu(
+           input CLK,
            input [3:0]      Operation,
            input [7:0]      A,
            input [7:0]      B,
@@ -11,7 +12,7 @@ module alu(
     assign Zero = (Y == 8'b0);
     assign Sub_UF = ((Operation == ALU_SUB_OP) && (B > A));
 
-    always @(Operation or A or B)
+    always @(posedge CLK)
     begin
         case (Operation)
             ALU_ADD_OP:
@@ -24,11 +25,15 @@ module alu(
             end
             ALU_MUL_OP:
             begin
-                Y = 8'b0; // TODO
+                Y = A*B;
             end
             ALU_DIV_OP:
             begin
-                Y = 8'b0; // TODO
+                Y = A/B;
+            end
+            ALU_MOD_OP:
+            begin
+                Y = A % B;
             end
             ALU_AND_OP:
             begin

@@ -1,5 +1,6 @@
 module branch_unit(
-        input [1:0]      Operation,
+        input CLK,
+        input [2:0]      Operation,
         input [7:0]      Address,
         input [7:0]      PC,
         input wire       Zero,
@@ -8,7 +9,7 @@ module branch_unit(
     );
 `include "incl/Branch_Ops.svh"
 
-    always @(Operation or Address) begin
+    always @(posedge CLK) begin
         PC_out = PC + 8'b00000001;
         case (Operation)
             BRANCH_NO_OP: begin
@@ -25,8 +26,12 @@ module branch_unit(
                 if (Sub_UF == 1)
                     PC_out = Address;
             end
+            BRANCH_UNCONDITIONAL_OP: begin
+                PC_out = Address;
+            end
             default: begin
-                $display("Unreachable case in branch_unit was reached!");
+                $display("Unreachable case in branch_unit was reached at %d!", $time);
+                $display("Op: ", Operation);
                 $finish;
             end
         endcase // case (Operation)

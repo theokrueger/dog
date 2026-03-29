@@ -3,7 +3,7 @@ module branch_unit_tb;
 
     // the branch unit
     reg CLK;
-    reg [1:0] Op;
+    reg [2:0] Op;
     reg [7:0] Addr;
     reg [7:0] PC;
     reg       Zero, Sub_UF;
@@ -11,6 +11,7 @@ module branch_unit_tb;
     reg [7:0]     expt;
 
     branch_unit dut (
+                    .CLK(CLK),
                     .Operation(Op),
                     .Address(Addr),
                     .PC(PC),
@@ -20,7 +21,7 @@ module branch_unit_tb;
                 );
 
     task dump();
-        $display("Failed branch_unit test case from %d", $time);
+        $display("Failed branch_unit test case at %d", $time);
         $display("Op: %b", Op);
         $display("Addr: %b", Addr);
         $display("PC: %b", PC);
@@ -34,11 +35,13 @@ module branch_unit_tb;
     initial begin
         CLK = 1'b0;
         forever begin
-            #0.5 CLK = ~CLK;
+           #0.4 CLK = 0;
+           #0.6 CLK = 1;
         end
     end
 
-    always @(posedge CLK)
+    always @(negedge CLK)
+      if ($time > 1)
         assert (PC_out == expt) else dump();
 
     // test cases
@@ -79,10 +82,10 @@ module branch_unit_tb;
          begin
              Op <= BRANCH_NOTZERO_OP;
              Addr<=8'b1111;
-             PC<=8'b11110000;
+             PC<=8'b11110001;
              Zero <= 'b1;
              Sub_UF <= 'b0;
-             expt <= 8'b1111;
+             expt <= 8'b11110010;
          end;
 
         #1
@@ -92,7 +95,7 @@ module branch_unit_tb;
              PC<=8'b11110000;
              Zero <= 'b0;
              Sub_UF <= 'b0;
-             expt <= 8'b11110001;
+             expt <= 8'b1111;
          end;
 
         #1
@@ -108,11 +111,11 @@ module branch_unit_tb;
         #1
          begin
              Op <= BRANCH_SUBOVERFLOW_OP;
-             Addr<=8'b10101;
+             Addr<=8'b10111;
              PC<=8'b11110000;
              Zero <= 'b0;
              Sub_UF <= 'b0;
-             expt <= 8'b10101;
+             expt <= 8'b11110001;
          end;
 
 

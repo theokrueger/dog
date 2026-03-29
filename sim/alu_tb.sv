@@ -12,6 +12,7 @@ module alu_tb;
     reg [7:0]    expt;
 
     alu dut (
+            .CLK(CLK),
             .Operation(Op),
             .A(A),
             .B(B),
@@ -35,13 +36,15 @@ module alu_tb;
     initial begin
         CLK = 1'b0;
         forever begin
-            #0.5 CLK = ~CLK;
+           #0.4 CLK = 0;
+           #0.6 CLK = 1;
         end
     end
 
 
     // check
-    always @(posedge CLK)
+    always @(negedge CLK)
+      if ($time > 1)
         assert (Y == expt) else dump();
 
 
