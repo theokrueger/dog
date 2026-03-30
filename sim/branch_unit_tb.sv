@@ -35,14 +35,14 @@ module branch_unit_tb;
     initial begin
         CLK = 1'b0;
         forever begin
-           #0.4 CLK = 0;
-           #0.6 CLK = 1;
+            #0.4 CLK = 0;
+            #0.6 CLK = 1;
         end
     end
 
     always @(negedge CLK)
-      if ($time > 1)
-        assert (PC_out == expt) else dump();
+        if ($time > 1)
+            assert (PC_out == expt) else dump();
 
     // test cases
     initial

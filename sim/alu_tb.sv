@@ -36,16 +36,16 @@ module alu_tb;
     initial begin
         CLK = 1'b0;
         forever begin
-           #0.4 CLK = 0;
-           #0.6 CLK = 1;
+            #0.4 CLK = 0;
+            #0.6 CLK = 1;
         end
     end
 
 
     // check
     always @(negedge CLK)
-      if ($time > 1)
-        assert (Y == expt) else dump();
+        if ($time > 1)
+            assert (Y == expt) else dump();
 
 
     // test cases

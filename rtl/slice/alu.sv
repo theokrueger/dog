@@ -1,11 +1,11 @@
 module alu(
-           input CLK,
-           input [3:0]      Operation,
-           input [7:0]      A,
-           input [7:0]      B,
-           output logic [7:0] Y,
-           output logic      Zero,
-           output logic      Sub_UF
+        input CLK,
+        input [3:0]      Operation,
+        input [7:0]      A,
+        input [7:0]      B,
+        output logic [7:0] Y,
+        output logic      Zero,
+        output logic      Sub_UF
     );
 `include "incl/ALU_Ops.svh"
 
