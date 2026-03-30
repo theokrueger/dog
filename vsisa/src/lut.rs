@@ -44,10 +44,11 @@ static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3
 
 /// Register translations
 static REGISTER_LUT: phf::Map<&'static str, &'static str> = phf_map! {
-    "r0" => "00000001",
-    "r1" => "00000002",
-    "r2" => "00000003",
-    "r3" => "00000004",
+    "rZ" => "00000001",
+    "r0" => "00000002",
+    "r1" => "00000003",
+    "r2" => "00000004",
+    "r3" => "00000005",
 };
 
 pub struct Lut;

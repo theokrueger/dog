@@ -14,7 +14,7 @@ module alu(
 
     always @(posedge CLK)
     begin
-        case (Operation)
+        unique case (Operation)
             ALU_ADD_OP:
             begin
                 Y = A + B;

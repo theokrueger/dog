@@ -11,7 +11,7 @@ module instruction_decode #(parameter N=4) (
     // sanity check
     initial begin
         assert (N>=1) else $fatal("[ ERR] Instruction word length too short!");
-        $display("[ GEN] Generating %0d-instruction wordlength decoder...", N);
+        $display("[ GEN] Generated %0d-instruction wordlength decoder", N);
     end
 
 
