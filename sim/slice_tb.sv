@@ -31,16 +31,16 @@ module slice_tb;
           );
 
     task dump();
-        $display("Failed slice test case at #%0d", $time);
+        $display("[ ERR] Failed slice test case at #%0d", $time);
         $display("  Instruction: %b", inst);
         $display("  Target: %b", target);
         $display("  Arg 1:  %0d", arg1);
         $display("  Arg 2:  %0d", arg2);
         $display("  PC in:  %b", pc_in);
 
-        $display("\n[Assertion] PC out:");
-        $display("  Expected: %b (%0d)", expt_pc_out, expt_pc_out);
-        $display("  Got:      %b (%0d)", pc_out, pc_out);
+        $display("\n  [Assertion] PC out:");
+        $display("    Expected: %b (%0d)", expt_pc_out, expt_pc_out);
+        $display("    Got:      %b (%0d)", pc_out, pc_out);
 
         // TODO target reg expected value
 
@@ -65,6 +65,7 @@ module slice_tb;
     // test cases
     initial
     begin
+        $display("[INFO] Testing slice");
         #0 instruct(ALU_NO_OP, 0, 0, 0,
                     0, 1, 0);
 
@@ -83,7 +84,7 @@ module slice_tb;
                     69, 70, 6);
 
         // done
-        #1 $display("Completed slice Test at %d",$time);
+        #1 $display("[PASS] Completed slice Test at %0d",$time);
 
     end
 

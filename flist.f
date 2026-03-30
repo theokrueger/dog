@@ -10,3 +10,4 @@ sim/branch_unit_tb.sv
 sim/instruction_decode_tb.sv
 sim/testbench.sv
 sim/slice_tb.sv
+sim/register_file_tb.sv

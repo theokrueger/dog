@@ -21,14 +21,14 @@ module branch_unit_tb;
                 );
 
     task dump();
-        $display("Failed branch_unit test case at %d", $time);
-        $display("Op: %b", Op);
-        $display("Addr: %b", Addr);
-        $display("PC: %b", PC);
-        $display("Zero: %b", Zero);
-        $display("Sub_UF: %b", Sub_UF);
-        $display("PC_out: %b", PC_out);
-        $display("Expt: %b", expt);
+        $display("[ ERR] Failed branch_unit test case at %d", $time);
+        $display("  Op: %b", Op);
+        $display("  Addr: %b", Addr);
+        $display("  PC: %b", PC);
+        $display("  Zero: %b", Zero);
+        $display("  Sub_UF: %b", Sub_UF);
+        $display("  PC_out: %b", PC_out);
+        $display("  Expt: %b", expt);
         $finish;
     endtask; // dump
 
@@ -48,7 +48,8 @@ module branch_unit_tb;
     initial
     begin
         #0
-         begin
+          begin
+             $display("[INFO] Testing branch unit");
              Op <= BRANCH_NO_OP;
              Addr<=8'b0;
              PC<=8'b0;
@@ -122,7 +123,7 @@ module branch_unit_tb;
         // done
         #1
          begin
-             $display("Completed branch_unit Test at %d",$time);
+             $display("[PASS] Completed branch_unit Test at %0d",$time);
          end;
 
     end

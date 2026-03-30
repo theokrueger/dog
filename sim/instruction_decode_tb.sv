@@ -19,6 +19,7 @@ module instruction_decode_tb;
     instruction_decode #(.N(2)) i2 (.word(word2), .ops(ops2), .As(As2), .Bs(Bs2), .Cs(Cs2), .branchop(branchop2), .branchaddr(branchaddr2));
 
     initial begin
+       $display("[INFO] Testing instruction decode");
         // try to extract values when N=1
         word1 <= 38'b11110000000000000000000000000000000000;
         #1 assert (ops1 == 4'b1111) else `die(("no op1 %b %b %b %b %b %b", ops1, As1, Bs1, Cs1, branchop1, branchaddr1));
@@ -69,7 +70,7 @@ module instruction_decode_tb;
         word2 <= 76'b11111111;
         #1 assert (branchaddr2 == 8'b11111111) else `die(("no ba1 %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2));
 
-        #2 $display("Completed instruction_decode tests at %d", $time);
+        #2 $display("[PASS] Completed instruction_decode tests at %0d", $time);
 
     end
 

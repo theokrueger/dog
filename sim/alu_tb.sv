@@ -22,14 +22,14 @@ module alu_tb;
         );
 
     task dump();
-        $display("Failed ALU test case from %d", $time);
-        $display("Op: %b", Op);
-        $display("A: %b", A);
-        $display("B: %b", B);
-        $display("Y: %b", Y);
-        $display("Zero: %b", Zero);
-        $display("Sub_UF: %b", Sub_UF);
-        $display("Expected: %b", expt);
+        $display("[ ERR] Failed ALU test case from %d", $time);
+        $display("  Op: %b", Op);
+        $display("  A: %b", A);
+        $display("  B: %b", B);
+        $display("  Y: %b", Y);
+        $display("  Zero: %b", Zero);
+        $display("  Sub_UF: %b", Sub_UF);
+        $display("  Expected: %b", expt);
         $finish;
     endtask; // dump
 
@@ -52,7 +52,8 @@ module alu_tb;
     initial
     begin
         #0
-         begin
+          begin
+             $display("[INFO] Testing ALU");
              Op <= 8'b0;
              A<=8'b0;
              B<=8'b0;
@@ -185,7 +186,7 @@ module alu_tb;
         // done
         #1
          begin
-             $display("Completed ALU Test at %d",$time);
+             $display("[PASS] Completed ALU Test at %0d",$time);
          end;
 
     end

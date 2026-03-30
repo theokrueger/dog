@@ -4,6 +4,8 @@ module testbench;
     branch_unit_tb branch_unit_test ();
     instruction_decode_tb instruction_decode_test ();
     slice_tb slice_test ();
+    register_file_tb register_file_test ();
+
     // system testing
 
     initial
