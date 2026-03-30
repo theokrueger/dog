@@ -2,13 +2,13 @@ module branch_unit_tb;
 `include "incl/Branch_Ops.svh"
 
     // the branch unit
-    reg CLK;
-    reg [2:0] Op;
-    reg [7:0] Addr;
-    reg [7:0] PC;
-    reg       Zero, Sub_UF;
+    logic CLK;
+    logic [2:0] Op;
+    logic [7:0] Addr;
+    logic [7:0] PC;
+    logic       Zero, Sub_UF;
     output [7:0] PC_out;
-    reg [7:0]     expt;
+    logic [7:0]     expt;
 
     branch_unit dut (
                     .CLK(CLK),

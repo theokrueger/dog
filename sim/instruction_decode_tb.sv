@@ -2,20 +2,20 @@
 
 module instruction_decode_tb;
 
-  reg [9+28:0] word1;
-  wire [4-1:0] ops1;
-  wire [8-1:0] As1, Bs1, Cs1;
+  logic [9+28:0] word1;
+  logic [4-1:0] ops1;
+  logic [8-1:0] As1, Bs1, Cs1;
 
-  wire [1:0] branchop1;
-  wire [7:0] branchaddr1;
+  logic [1:0] branchop1;
+  logic [7:0] branchaddr1;
   instruction_decode #(.N(1)) i1 (.word(word1), .ops(ops1), .As(As1), .Bs(Bs1), .Cs(Cs1), .branchop(branchop1), .branchaddr(branchaddr1));
 
-  reg [9+28*2:0] word2;
-  wire [2*4-1:0] ops2;
-  wire [2*8-1:0] As2, Bs2, Cs2;
+  logic [9+28*2:0] word2;
+  logic [2*4-1:0] ops2;
+  logic [2*8-1:0] As2, Bs2, Cs2;
 
-  wire [1:0] branchop2;
-  wire [7:0] branchaddr2;
+  logic [1:0] branchop2;
+  logic [7:0] branchaddr2;
   instruction_decode #(.N(2)) i2 (.word(word2), .ops(ops2), .As(As2), .Bs(Bs2), .Cs(Cs2), .branchop(branchop2), .branchaddr(branchaddr2));
 
   initial begin

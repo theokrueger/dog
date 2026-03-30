@@ -2,11 +2,11 @@ module slice_tb;
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
 
-    reg CLK;
+    logic CLK;
 
-    reg [3:0] inst;
-    reg [7:0] target, arg1, arg2, pc_in, pc_out;
-    reg [7:0] expt_pc_out;
+    logic [3:0] inst;
+    logic [7:0] target, arg1, arg2, pc_in, pc_out;
+    logic [7:0] expt_pc_out;
 
     task instruct( [3:0] new_instruction, [7:0] target_reg, [7:0] arg_reg, [7:0] arg_reg_or_literal, [7:0] pc_input, [7:0] pc_out_expt, [7:0] target_reg_expected_value);
         begin

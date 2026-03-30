@@ -3,13 +3,13 @@ module alu_tb;
 `include "incl/ALU_Ops.svh"
 
     // the ALU
-    reg CLK;
-    reg [3:0] Op;
-    reg [7:0] A;
-    reg [7:0] B;
-    output reg [7:0] Y;
-    output wire   Zero, Sub_UF;
-    reg [7:0]    expt;
+    logic CLK;
+    logic [3:0] Op;
+    logic [7:0] A;
+    logic [7:0] B;
+    output logic [7:0] Y;
+    output logic   Zero, Sub_UF;
+    logic [7:0]    expt;
 
     alu dut (
             .CLK(CLK),

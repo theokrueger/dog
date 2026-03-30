@@ -13,12 +13,12 @@ module slice #(parameter N=0)
 `include "incl/Branch_Ops.svh"
 
     // ALU
-    reg[3:0] alu_op;
-    reg [7:0] alu_arg_1;
-    reg [7:0] alu_arg_2; // may be literal or register
-    reg [7:0] alu_target;
-    wire      alu_zero;
-    wire      alu_sub_uf;
+    logic [3:0] alu_op;
+    logic [7:0] alu_arg_1;
+    logic [7:0] alu_arg_2; // may be literal or register
+    logic [7:0] alu_target;
+    logic       alu_zero;
+    logic       alu_sub_uf;
     alu alu(
             .Operation(alu_op),
             .A(alu_arg_1),
@@ -93,7 +93,7 @@ module slice #(parameter N=0)
     // Branch unit
     generate
         if (N == 0) begin
-            reg [2:0] branch_op;
+            logic [2:0] branch_op;
             always @(posedge CLK) begin
                 case (Instruction)
                     ISA_OP_JMP:  begin
