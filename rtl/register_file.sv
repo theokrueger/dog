@@ -5,7 +5,7 @@ module register_file #(
     (
         input                    CLK,
         input [(reg_address_bits-1):0]       Reg_Selector[N],
-        output logic [7:0] Data_Bus[N]
+        output tri [7:0] Data_Bus[N]
     );
 
     localparam reg_address_bits = $clog2(Regs) + 1; // plus r/w bit as MSB
@@ -39,10 +39,10 @@ module register_file #(
                                .Enable(Enable),
                                .Write(write),
                                .Register(reg_file[reg_i]),
-                               .Data(data)
+                               .Data_Reg_Cross(data)
                            );
             end else begin
-                // for scratch register
+                // scratch register
                 assign data = '0;
             end
 
@@ -51,12 +51,14 @@ module register_file #(
                 reg_crossbar #(reg_address_bits, reg_i) crossbar (
                                  .CLK(CLK),
                                  .Addr(Reg_Selector[slice_i]),
-                                 .Data(data),
+                                 .Data_Reg_Cross(data),
+                                 .Data_Cross_Slice(Data_Bus[slice_i]),
                                  .Enable_Out(enable),
                                  .Write_Out(write)
                              );
             end
         end
+
     endgenerate
 
 
@@ -71,12 +73,18 @@ module reg_crossbar #(
     (
         input              CLK,
         input [ADDR_W-1:0] Addr,
-        inout tri [7:0]    Data,
+        inout tri [7:0]    Data_Reg_Cross,
+        inout tri [7:0]    Data_Cross_Slice,
         output             Enable_Out,
         output             Write_Out
     );
     assign Write_Out = Addr[ADDR_W-1];
     assign Enable_Out = (Addr[ADDR_W-2:0] == TARGET) ? '1 : 'z;
+
+    // send data from slice to reg when enable and write are on, otherwise do not drive
+    assign Data_Reg_Cross = (Enable_Out && Write_Out) ? Data_Cross_Slice : 'z;
+    // same but for other direction
+    assign Data_Cross_Slice = (Enable_Out && !Write_Out) ? Data_Reg_Cross : 'z;
 endmodule
 
 // Boundary between reg and tristate crossbar
@@ -85,17 +93,17 @@ module reg_writer    (
         input              Enable,
         input              Write, // 1 = write from data to register
         output logic [7:0] Register,
-        inout tri [7:0]    Data
+        inout tri [7:0]    Data_Reg_Cross
     );
 
-    assign Data = (Enable && !Write) ? Register : 'z;
+    assign Data_Reg_Cross = (Enable && !Write) ? Register : 'z;
 
     logic [7:0] internal;
     assign Register = internal;
 
     always @(posedge CLK) begin
         if (Enable && Write) begin
-            internal <= Data;
+            internal <= Data_Reg_Cross;
         end
     end
 endmodule
