@@ -2,11 +2,11 @@ module slice #(parameter N=0)
     (
         input CLK,
         input [3:0]  Instruction,
-        input [7:0]  Target,
         input [7:0]  Arg1,
         input [7:0]  Arg2,
         input [7:0]  PC_in,
-        output [7:0] PC_out
+        output [7:0] PC_out,
+        output [7:0] ALU_out
     );
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
@@ -14,16 +14,13 @@ module slice #(parameter N=0)
 
     // ALU
     logic [3:0] alu_op;
-    logic [7:0] alu_arg_1;
-    logic [7:0] alu_arg_2; // may be literal or register
-    logic [7:0] alu_target;
     logic       alu_zero;
     logic       alu_sub_uf;
     alu alu(
             .Operation(alu_op),
-            .A(alu_arg_1),
-            .B(alu_arg_2),
-            .Y(alu_target),
+            .A(Arg1),
+            .B(Arg2),
+            .Y(ALU_out),
             .Zero(alu_zero),
             .Sub_UF(alu_sub_uf)
         );
@@ -78,17 +75,6 @@ module slice #(parameter N=0)
                    end
                endcase // case (Instruction)
            end
-
-           // Writeback
-           always @(alu_target) begin
-               // TODO write alu output to target register
-           end
-
-           // Register Read
-           always @(Arg1) begin
-               // TODO read register to arg1
-           end
-
 
            // Branch unit
            generate
