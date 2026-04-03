@@ -1,7 +1,7 @@
 set init_lef_file [list $PNR_DIR/lib/gsclib045.lef]
 
 set init_verilog $PNR_DIR/netlist.v
-set init_top_cell alu
+set init_top_cell processor
 set init_mmmc_file $PNR_DIR/mmmc.tcl
 
 #set power and ground rails
