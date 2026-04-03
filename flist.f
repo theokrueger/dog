@@ -1,6 +1,6 @@
 rtl/slice/alu.sv
 rtl/slice/branch_unit.sv
-rtl/instruction_decode.v
+rtl/instruction_decode.sv
 rtl/processor.sv
 rtl/slice/slice.sv
 rtl/register_file.sv

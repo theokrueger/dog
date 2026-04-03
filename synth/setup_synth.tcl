@@ -12,7 +12,7 @@ set PNR_DIR ./pnr
 file mkdir $PNR_DIR
 
 # root mod to synthesize
-set MOD_NAME alu
+set MOD_NAME processor
 
 # initialize link and synthetic libraries
 # is synthetic library global??? lol.
@@ -24,7 +24,11 @@ set target_library $SYNTH_DIR/gpdk045_slow.db
 # read potential verilog targets
 set RTL_DIR rtl
 read_verilog $RTL_DIR/slice/alu.sv
-# TODO add more
+read_verilog $RTL_DIR/slice/branch_unit.sv
+read_verilog $RTL_DIR/slice/instruction_decode.sv
+read_verilog $RTL_DIR/slice/slice.sv
+read_verilog $RTL_DIR/processor.sv
+read_verilog $RTL_DIR/register_file.sv
 
 current_design $MOD_NAME
 
