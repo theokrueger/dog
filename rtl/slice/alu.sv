@@ -14,14 +14,14 @@ module alu(
 
     always @(*)
     begin
-        $display("alu op %d %d %d %d", Operation, ALU_ADD_IM_OP, A, B);
+        //$display("alu op %d %d %d %d", Operation, ALU_ADD_IM_OP, A, B);
         unique case (Operation)
             ALU_ADD_OP,
             ALU_ADD_IM_OP:
             begin
-                $display("adding");
+                //$display("adding");
                 Y <= A + B;
-                $display("y %d %d %d", Y, A, B);
+                //$display("y %d %d %d", Y, A, B);
             end
             ALU_SUB_OP,
             ALU_SUB_IM_OP:

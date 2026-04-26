@@ -34,8 +34,10 @@ module register_file_tb;
 
         $display("[INFO] Testing register_file");
         rst <= 1;
-        @(posedge clk);
+       #2;
         rst <= 0;
+       #2;
+
         write_data[0] <= 8'b1;
         write_data[1] <= 8'b10;
         write_sel[0] <= 1'b1;

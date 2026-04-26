@@ -6,6 +6,7 @@ module testbench;
     register_file_tb register_file_test ();
 
     // system testing
+    processor_tb processors_test ();
 
     initial
     begin
