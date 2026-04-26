@@ -12,7 +12,7 @@ set PNR_DIR ./pnr
 file mkdir $PNR_DIR
 
 # root mod to synthesize
-set MOD_NAME processor
+set MOD_NAME instruction_decode
 
 # initialize link and synthetic libraries
 # is synthetic library global??? lol.
