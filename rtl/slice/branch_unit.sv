@@ -9,7 +9,7 @@ module branch_unit(
     );
 `include "incl/Branch_Ops.svh"
 
-    always @(posedge CLK) begin
+    always @(*) begin
         PC_out = PC + 8'b00000001;
         unique case (Operation)
                    BRANCH_NO_OP: begin

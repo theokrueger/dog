@@ -75,25 +75,29 @@ module processor_tb;
 
         $display("[INFO] Testing processor");
         rst <= 1;
+        PC <= 0;
         word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
         @(posedge clk);
-        // #1;
-        // assert_correct({8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0});
+        #1;
+        assert_correct({8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0}, 1);
         rst <= 0;
         // source1 source2 dest
         // 
         // word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
-        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd1, ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, 3'b0, 8'b0};
+        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd1, ALU_ADD_IM_OP, 8'b0, 8'd14, 8'd2, 3'b0, 8'b0};
+        PC <= 0;
         @(posedge clk);
         #1;
-        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'd13, 8'b0}, 1);
+        $display("pc %d", nextPC);
+        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd14, 8'd13, 8'b0}, 1);
 
-        // word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
-        // @(posedge clk);
-        // #1;
+        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd3, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
+        @(posedge clk);
+        #1;
+        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'd14, 8'd13, 8'b0}, 1);
         // // done
         #1 $display("[PASS] Completed slice Test at %0d",$time);
-
+        $finish;
     end
 
 endmodule // slice_tb
