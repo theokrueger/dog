@@ -1,11 +1,13 @@
 module register_file_tb;
-
+   localparam regs = 16;
+   
+   localparam reg_bits = $clog2(regs);
     logic clk;
     logic rst;
-    wire [7:0] regs_out [0:15];
+    wire [7:0] regs_out [regs];
     logic [7:0] write_data [0:2-1];
-    logic [3:0] write_sel [0:2-1];
-    register_file #(2) dut (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
+    logic [reg_bits-1:0] write_sel [0:2-1];
+    register_file #( 2, regs ) dut (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
     initial begin
         clk = 1'b0;
@@ -19,7 +21,7 @@ module register_file_tb;
     task dump();
         $display("[ ERR] Failed reg test case at #%0d", $time);
         $write("Register state: ");
-        for (int i = 0; i < 16; i++) begin
+        for (int i = 0; i < regs; i++) begin
             $write("r%0d=%0d ", i, regs_out[i]);
         end
 
@@ -42,7 +44,8 @@ module register_file_tb;
         #1;
         $display("%b", regs_out[1]);
         $display("%b", regs_out[2]);
-        dump();
+       $finish; // TMP
+        //dump();
 
         // // done
         // #1 $display("[PASS] Completed slice Test at %0d",$time);

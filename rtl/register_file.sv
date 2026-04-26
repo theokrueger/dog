@@ -1,15 +1,16 @@
-module register_file #(parameter N=4)
+module register_file #(parameter N=4, parameter Regs=16)
     (
         input wire clk,
         input wire rst,
         // 15 8-bit registers
-        output wire [7:0] regs_out [0:15],
-        // what to 
+        output wire [7:0] regs_out [Regs],
+        // what to
         input wire [7:0] write_data [0:N-1],
-        input wire [3:0] write_sel [0:N-1]
+        input wire [reg_address_bits-1:0] write_sel [0:N-1]
     );
 
-    reg [7:0] registers [0:15];
+    localparam reg_address_bits = $clog2(Regs);
+    reg [7:0] registers [Regs];
     integer i;
 
     always @(posedge clk) begin
@@ -28,8 +29,8 @@ module register_file #(parameter N=4)
                     registers[write_sel[i]] <= write_data[i];
                 end
             end
-        end
-        registers[0] = 8'b0;
+        end // else: !if(rst)
+        registers[0] = 0;
     end
 
     genvar j;
@@ -38,5 +39,5 @@ module register_file #(parameter N=4)
             assign regs_out[j] = registers[j];
         end
     endgenerate
-    
+
 endmodule
