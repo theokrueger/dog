@@ -39,6 +39,7 @@ module register_file_tb;
         write_sel[0] <= 1'b1;
         write_sel[1] <= 2'b10;
         @(posedge clk);
+        #1;
         $display("%b", regs_out[1]);
         $display("%b", regs_out[2]);
         dump();
