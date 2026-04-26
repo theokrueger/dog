@@ -5,29 +5,21 @@ module slice_tb;
     logic CLK;
 
     logic [3:0] inst;
-    logic [7:0] target, arg1, arg2, pc_in, pc_out;
+    logic [7:0] arg1, arg2, pc_in, pc_out;
     logic [7:0] expt_pc_out;
+    logic [7:0] regs [0:15];
+    logic [7:0] target;
 
-    task instruct( [3:0] new_instruction, [7:0] target_reg, [7:0] arg_reg, [7:0] arg_reg_or_literal, [7:0] pc_input, [7:0] pc_out_expt, [7:0] target_reg_expected_value);
-        begin
-            inst <= new_instruction;
-            target <= target_reg;
-            arg1 <= arg_reg;
-            arg2 <= arg_reg_or_literal;
-            pc_in <= pc_input;
-            expt_pc_out <= pc_out_expt;
-            // TODO target reg expected value
-        end
-    endtask
 
-    slice dut (
+    slice #(.N(1)) dut (
               .CLK(CLK),
               .Instruction(inst),
-              .Target(target),
               .Arg1(arg1),
               .Arg2(arg2),
+              .Regs(regs),
               .PC_in(pc_in),
-              .PC_out(pc_out)
+              .PC_out(pc_out),
+              .ALU_out(target)
           );
 
     task dump();

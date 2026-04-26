@@ -11,3 +11,4 @@ sim/instruction_decode_tb.sv
 sim/testbench.sv
 sim/slice_tb.sv
 sim/register_file_tb.sv
+sim/processor_tb.sv
