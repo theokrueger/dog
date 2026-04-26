@@ -1,4 +1,4 @@
-module register_file #(parameter N=4, parameter Regs=16)
+module register_file #(parameter N=4, parameter Regs=16, parameter Reg_address_bits=4)
     (
         input wire clk,
         input wire rst,
@@ -6,10 +6,9 @@ module register_file #(parameter N=4, parameter Regs=16)
         output wire [7:0] regs_out [Regs],
         // what to
         input wire [7:0] write_data [0:N-1],
-        input wire [reg_address_bits-1:0] write_sel [0:N-1]
+        input wire [Reg_address_bits-1:0] write_sel [0:N-1]
     );
 
-    localparam reg_address_bits = $clog2(Regs);
     reg [7:0] registers [Regs];
     integer i;
 

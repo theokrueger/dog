@@ -18,7 +18,7 @@ module processor #(parameter N=2, parameter Regs=16) (
     wire [7:0] regs_out [0:Regs-1];
     wire [7:0] write_data [0:N-1];
     wire [reg_bits-1:0] write_sel [0:N-1];
-    register_file #(.N(N), .Regs(Regs)) rf (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
+    register_file #(.N(N), .Regs(Regs), .Reg_address_bits(reg_bits)) rf (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
     genvar i;
     wire [7:0] next_PC;
