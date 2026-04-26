@@ -9,9 +9,13 @@ use util::StringUtil;
 
 use clap::Parser as ClapParser;
 use pest::{Parser as PestParser, iterators::Pair};
-use std::{collections::HashMap, process};
+use std::{
+    collections::{HashMap, HashSet},
+    process,
+};
 
 const LABEL_NOEXIST: i16 = -1; // placeholder value for labels that have not been found yet
+const NOP_PAD: &str = "NOP_PAD!!!!";
 
 #[derive(Debug)]
 enum ParseError {
@@ -36,26 +40,62 @@ fn main() -> Result<(), ParseError> {
     // assemble
     let mut pc: u8 = 0; // program counter
     let mut labels: HashMap<String, i16> = HashMap::new(); // store program counter of label
-    let mut lstring: String = "".to_string();
-    let mut icnt = 0; //
+    let mut lstring: String = "".to_string(); // line string
+    let mut icnt = 0; // instruction count for line
+    let mut r_hazards: HashSet<String> = HashSet::new();
+    let mut w_hazards: HashSet<String> = HashSet::new();
+
     for line in file.into_inner() {
-        if icnt == args.wordlength {
+        match line.as_rule() {
+            Rule::line => {
+                match parse_line(line, &mut pc, &mut labels, &mut r_hazards, &mut w_hazards) {
+                    // no errors
+                    Ok((instr, was_instruction)) => {
+                        if was_instruction {
+                            out += instr.as_str();
+                            icnt += 1;
+                        }
+                    }
+                    Err(e) => match e {
+                        // hazard encountered, fill to EOL
+                        ParseError::Hazard => {
+                            while icnt < args.wordlength {
+                                lstring.push_str(NOP_PAD);
+                                icnt += 1;
+                            }
+                        }
+                        // user fucked up
+                        _ => {
+                            panic!("{:?}", e);
+                        }
+                    },
+                }
+            }
+            Rule::EOI => {
+                // fill to EOL
+                if icnt > 0 {
+                    while icnt < args.wordlength {
+                        lstring.push_str(NOP_PAD);
+                        icnt += 1;
+                    }
+                }
+            }
+            _ => unreachable!("{line}"),
+        }
+        // carriage return on saturated instruction word
+        if icnt >= args.wordlength {
             icnt = 0;
             lstring.push('\n');
             out.push_str(lstring.as_str());
             lstring = "".to_string();
-        }
-        match line.as_rule() {
-            Rule::line => {
-                //                if let Err(e) = parse_line(line, &mut out, &mut pc, &mut labels) {
-                let was_instruction = parse_line(line, &mut lstring, &mut pc, &mut labels)?;
-                icnt += was_instruction as u8;
-                //                }
-            }
-            Rule::EOI => (),
-            _ => unreachable!("{line}"),
+            w_hazards = HashSet::new();
+            r_hazards = HashSet::new();
+            pc += 1;
         }
     }
+
+    // fill
+    out = out.replace(NOP_PAD, format!("{:0<32b}", 0).as_str());
 
     // substitute labels
     for (k, v) in labels.iter() {
@@ -75,17 +115,19 @@ fn main() -> Result<(), ParseError> {
 /// Returns whether line was instruction or not
 fn parse_line(
     line: Pair<Rule>,
-    out: &mut String,
-    pc: &mut u8,
+    pc: &u8,
     labels: &mut HashMap<String, i16>,
-) -> Result<bool, ParseError> {
+    r_hazards: &mut HashSet<String>,
+    w_hazards: &mut HashSet<String>,
+) -> Result<(String, bool), ParseError> {
+    let mut out: String = String::new();
     let lstr = line.as_str().to_string();
     let mut inr = line.into_inner();
     let len = inr.len();
 
     if len == 0 {
         // comment or blank
-        return Ok(false);
+        return Ok((out, false));
     }
 
     let first = inr.nth(0).unwrap();
@@ -94,7 +136,7 @@ fn parse_line(
         assert!(first.as_rule() == Rule::label, "error in {lstr}");
         println!("Label '{}' found at pc {pc}", first.as_str());
         labels.insert(first.as_str().to_string(), *pc as i16);
-        return Ok(false);
+        return Ok((out, false));
     }
     // otherwise must be instruction
     assert!(first.as_rule() == Rule::instr);
@@ -167,9 +209,7 @@ fn parse_line(
 
         return Err(ParseError::BadOp);
     }
-
-    *pc += 1;
-    return Ok(true);
+    return Ok((out, true));
 }
 
 #[cfg(test)]
