@@ -5,7 +5,7 @@ module branch_unit(
         input [7:0]      PC,
         input       Zero,
         input       Sub_UF,
-        output [7:0] PC_out
+        output reg [7:0] PC_out
     );
 `include "incl/Branch_Ops.svh"
 
