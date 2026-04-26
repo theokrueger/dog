@@ -24,24 +24,24 @@ module processor #(parameter N=2, parameter Regs=16) (
   wire [7:0] next_PC;
   generate
     for (i=0; i<N; i=i+1) begin
-       logic [7:0] A_reg;
-       logic [7:0] B_reg;
-      logic [3:0] op_reg;
+       reg [7:0] A_reg;
+       reg [7:0] B_reg;
+       reg [3:0] op_reg;
 
       always_ff @(posedge clk) begin
-        A_reg <= regs_out[As[8*i +: 4]];
-        case(ops[4*i +: 4])
+        A_reg <= regs_out[As[8*i+3 : 8*i]];
+        case(ops[4*i+3 : 4*i])
           ALU_ADD_IM_OP,
           ALU_SUB_IM_OP,
           ALU_MUL_IM_OP,
           ALU_DIV_IM_OP,
-          ALU_MOD_IM_OP : B_reg <= Bs[8*i : 8*i+7];
-          default       : B_reg <= regs_out[Bs[8*i : 8*i+3]];
+          ALU_MOD_IM_OP : B_reg <= Bs[8*i+7 : 8*i];
+          default       : B_reg <= regs_out[Bs[8*i+4 : 8*i]];
         endcase;
-        op_reg <= ops[4*i : 4*i+3];
+        op_reg <= ops[4*i+3 : 4*i];
       end
-      logic alu_zero;
-      logic alu_sub_uf;
+      reg alu_zero;
+      reg alu_sub_uf;
       alu alu(
               .CLK(clk),
               .Operation(op_reg),
