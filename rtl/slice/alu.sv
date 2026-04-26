@@ -22,7 +22,7 @@ module alu(
                 //$display("adding");
                 Y <= A + B;
                 //$display("y %d %d %d", Y, A, B);
-            end;
+            end
             ALU_SUB_OP,
             ALU_SUB_IM_OP:
             begin
