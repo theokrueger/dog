@@ -2,7 +2,7 @@ module processor_tb;
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
 
-    localparam regs = 32;
+    localparam regs = 16;
     localparam  reg_bits = $clog2(regs);
     localparam   n = 2;
 
@@ -29,10 +29,9 @@ module processor_tb;
 
     integer i, j;
     task dump();
-        $display("[ ERR] Failure in processor test case at #%0d", $time);
-        $display("  Register state: ");
+        $write("  registers: ");
         for (int i = 0; i < regs; i++) begin
-            $display("    r%0d=%0d ", i, reg_state[i]);
+            $write("    r%0d=%0d ", i, reg_state[i]);
         end
         $write("\n");
         $finish;
@@ -43,11 +42,12 @@ module processor_tb;
         for (int i=0; i<16; i++) begin
             assert (arr[8*i +: 8] == reg_state[i]);
             else begin
-                // $write("expected: ");
-                // for (int i = 0; i < 16; i++) begin
-                //     $write("r%0d=%0d ", i, arr[8*i +: 8]);
-                // end
-                // $write("\n");
+                $display("[ ERR] Failure in processor test case at #%0d", $time);
+                $write("  expected: ");
+                for (int i = 0; i < 16; i++) begin
+                    $write("    r%0d=%0d ", i, arr[8*i +: 8]);
+                end
+                $write("\n");
                 dump();
             end
         end
@@ -81,15 +81,16 @@ module processor_tb;
         // assert_correct({8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0});
         rst <= 0;
         // source1 source2 dest
-        //
-        word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
+        // 
+        // word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
+        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd1, ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, 3'b0, 8'b0};
         @(posedge clk);
         #1;
-        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'b0}, 1);
+        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'd13, 8'b0}, 1);
 
-        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
-        @(posedge clk);
-        #1;
+        // word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
+        // @(posedge clk);
+        // #1;
         // // done
         #1 $display("[PASS] Completed slice Test at %0d",$time);
 
