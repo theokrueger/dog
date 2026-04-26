@@ -4,7 +4,7 @@ module processor #(parameter N=2, parameter Regs=16) (
   input [10+28*N:0] word,
   input [7:0] PC,
   output [7:0] nextPC,
-  output [7:0] reg_state [Regs]
+  output [7:0] reg_state [0:Regs-1]
 );
 `include "incl/ALU_Ops.svh"
    localparam reg_bits = $clog2(Regs);
@@ -35,10 +35,10 @@ module processor #(parameter N=2, parameter Regs=16) (
           ALU_SUB_IM_OP,
           ALU_MUL_IM_OP,
           ALU_DIV_IM_OP,
-          ALU_MOD_IM_OP : B_reg <= Bs[8*i +: 8];
-          default       : B_reg <= regs_out[Bs[8*i +: 4]];
+          ALU_MOD_IM_OP : B_reg <= Bs[8*i : 8*i+7];
+          default       : B_reg <= regs_out[Bs[8*i : 8*i+3]];
         endcase;
-        op_reg <= ops[4*i +: 4];
+        op_reg <= ops[4*i : 4*i+3];
       end
       logic alu_zero;
       logic alu_sub_uf;
