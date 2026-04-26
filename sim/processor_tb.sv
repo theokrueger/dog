@@ -5,7 +5,7 @@ module processor_tb;
     logic clk;
     logic rst;
 
-    logic [9+28*2:0] word;
+    logic [10+28*2:0] word;
     logic [7:0] PC;
     logic [7:0] nextPC;
     wire [7:0] reg_state [0:15];
@@ -23,16 +23,39 @@ module processor_tb;
         .reg_state(reg_state)
     );
 
-    integer i;
+    integer i, j;
     task dump();
         $write("Register state: ");
         for (int i = 0; i < 16; i++) begin
             $write("r%0d=%0d ", i, reg_state[i]);
         end
         $write("\n");
+        $finish;
 
     endtask; // dump
 
+    task assert_correct(input logic [127:0] arr, pc);
+        for (int i=0; i<16; i++) begin
+            assert (arr[8*i +: 8] == reg_state[i]) else begin
+                // $write("expected: ");
+                // for (int i = 0; i < 16; i++) begin
+                //     $write("r%0d=%0d ", i, arr[8*i +: 8]);
+                // end
+                // $write("\n");
+                dump();
+            end
+        end
+        // assert (pc == nextPC) else begin
+        //     $display("bad pc real %d expected %d", nextPC, pc);
+        //     $write("expected: ");
+        //     for (int i = 0; i < 16; i++) begin
+        //         $write("r%0d=%0d ", i, arr[8*i +: 8]);
+        //     end
+        //     $write("\n");
+        //     dump();
+        // end
+    endtask
+    
     initial begin
         clk = 1'b0;
         forever begin
@@ -47,32 +70,21 @@ module processor_tb;
 
         $display("[INFO] Testing thing");
         rst <= 1;
-        word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 2'b00, 8'b0};
+        word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
         @(posedge clk);
-        dump();
+        // #1;
+        // assert_correct({8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0});
         rst <= 0;
-        word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 2'b00, 8'b0};
+        // source1 source2 dest
+        // 
+        word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
         @(posedge clk);
         #1;
-        dump();
-        $finish;
-        // #0 instruct(ALU_NO_OP, 0, 0, 0,
-        //             0, 1, 0);
+        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'b0}, 1);
 
-        // // normal operation
-        // // nop
-        // #1 instruct(ALU_NO_OP, 0, 0, 0,
-        //             0, 1, 0);
-        // // r1 = 1+2
-        // #1 instruct(ALU_ADD_OP, 1, 1, 2,
-        //             55, 56, 3);
-        // // r1 = 1-2
-        // #1 instruct(ALU_SUB_OP, 1, 3, 2,
-        //             69, 70, 1);
-        // // r1 = 2*3
-        // #1 instruct(ALU_MUL_OP, 1, 3, 2,
-        //             69, 70, 6);
-
+        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd2, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
+        @(posedge clk);
+        #1;
         // // done
         #1 $display("[PASS] Completed slice Test at %0d",$time);
 

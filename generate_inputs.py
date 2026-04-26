@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from generate_prime_factorization import word_into_bin, generate
 
 @dataclass
 class Ops:
@@ -24,10 +25,11 @@ class Ops:
     BRANCH_ZERO_OP = 0b11
     BRANCH_UNCONDITIONAL_OP = 0b100
 
-class processor():
+class Processor():
 
     def __init__(self, N, regs):
 
+        self.steps = 0
         self.N = N
         self.regs = [0 for _ in range(regs)]
     
@@ -48,11 +50,11 @@ class processor():
             # add branching part
             # branchop is 2 bits, branchaddr is 7
             decoded_line.append([
-                int(line[self.N*28:self.N*28+2], 2),
-                int(line[self.N*28+2:self.N*28+10], 2)
+                int(line[self.N*28:self.N*28+3], 2),
+                int(line[self.N*28+3:self.N*28+11], 2)
             ])
 
-            decoded_lines.push(decoded_line)
+            decoded_lines.append(decoded_line)
 
         return decoded_lines
     
@@ -71,7 +73,7 @@ class processor():
         for i, inst in enumerate(instructions[:-1]):
             arg1 = self.regs[inst[1]]
             arg2 = None
-            match inst[1]:
+            match inst[0]:
                 case Ops.ALU_ADD_IM_OP \
                     | Ops.ALU_SUB_IM_OP \
                     | Ops.ALU_MUL_IM_OP \
@@ -86,23 +88,23 @@ class processor():
                 case Ops.ALU_ADD_OP | Ops.ALU_ADD_IM_OP:
                     self.regs[inst[3]] = (arg1 + arg2) % 2**8
                 case Ops.ALU_SUB_OP | Ops.ALU_SUB_IM_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (arg1 - arg2) % 2**8
                 case Ops.ALU_MUL_OP | Ops.ALU_MUL_IM_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (arg1 * arg2) % 2**8
                 case Ops.ALU_DIV_OP | Ops.ALU_DIV_IM_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (int(arg1 / arg2)) % 2**8
                 case Ops.ALU_AND_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (arg1 & arg2) % 2**8
                 case Ops.ALU_OR_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (arg1 | arg2) % 2**8
                 case Ops.ALU_EQ_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = int(arg1 == arg2)
                 case Ops.ALU_GT_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = int(arg1 > arg2)
                 case Ops.ALU_GTE_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = int(arg1 >= arg2)
                 case Ops.ALU_MOD_OP | Ops.ALU_MOD_IM_OP:
-                    self.regs[inst[3]] = (arg1 + arg2) % 2**8
+                    self.regs[inst[3]] = (arg1 % arg2) % 2**8
                 case _:
                     raise Exception("died")
             if (i == 0):
@@ -128,8 +130,69 @@ class processor():
             case _:
                 raise Exception("died")
 
+        
+        self.steps += 1
         return pc
 
         
+
+def generate_testbench(name, N):
+    start = f"""
+module {name}_tb;
+`include "incl/ISA_Ops.svh"
+`include "incl/ALU_Ops.svh"
+
+    logic clk;
+    logic rst;
+
+    logic [10+28*{N}:0] word;
+    logic [7:0] PC;
+    logic [7:0] nextPC;
+    wire [7:0] reg_state [0:15];
+
+    // expected values for checking
+    logic [7:0] exp_nextPC;
+    logic [7:0] exp_reg_state [0:15];
+
+    processor #(.N({N})) dut (
+        .clk(clk),
+        .rst(rst),
+        .word(word),
+        .PC(PC),
+        .nextPC(nextPC),
+        .reg_state(reg_state)
+    );
+
+    integer i;
+    task dump();
+        $write("Register state: ");
+        for (int i = 0; i < 16; i++) begin
+            $write("r%0d=%0d ", i, reg_state[i]);
+        end
+        $write("\n");
+
+    endtask; // dump
+
+    initial begin
+        clk = 1'b0;
+        forever begin
+            #0.4 clk = 0;
+            #0.6 clk = 1;
+        end
+    end
+
+    initial
+    begin
+
+"""
+
+    
+
+if __name__ == "__main__":
+    program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
+    
+    proc = Processor(4, 16)
+    proc.run_program(program)
+    print(proc.regs)
 
 

@@ -1,22 +1,24 @@
 module processor #(parameter N=4, parameter Regs=16) (
   input wire clk,
   input wire rst,
-  input [9+28*N:0] word,
+  input [10+28*N:0] word,
   input [7:0] PC,
   output [7:0] nextPC,
   output [7:0] reg_state [0:15]
 );
 `include "incl/ALU_Ops.svh"
+  localparam reg_address_bits = $clog2(Regs);
 
   wire [N*4-1:0] ops;
   wire [N*8-1:0] As, Bs, Cs;
-  wire [1:0] branchop;
+  wire [2:0] branchop;
   wire [7:0] branchaddr;
   instruction_decode #(.N(N)) decode (.word(word), .ops(ops), .As(As), .Bs(Bs), .Cs(Cs), .branchop(branchop), .branchaddr(branchaddr));
 
+
   wire [7:0] regs_out [0:15];
   wire [7:0] write_data [0:N-1];
-  wire [3:0] write_sel [0:N-1];
+  wire [reg_address_bits-1:0] write_sel [0:N-1];
   register_file #(.N(N), .Regs(Regs)) rf (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
   genvar i;
@@ -54,7 +56,7 @@ module processor #(parameter N=4, parameter Regs=16) (
       if (i == 0) begin
         branch_unit bu(
                        .CLK(CLK),
-                       .Operation(branch_op),
+                       .Operation(branchop),
                        .Address(branchaddr),
                        .PC(PC),
                        .PC_out(nextPC),
