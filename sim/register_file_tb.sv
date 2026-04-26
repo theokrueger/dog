@@ -17,7 +17,7 @@ module register_file_tb;
 
     integer i;
     task dump();
-        $display("[ ERR] Failed slice test case at #%0d", $time);
+        $display("[ ERR] Failed reg test case at #%0d", $time);
         $write("Register state: ");
         for (int i = 0; i < 16; i++) begin
             $write("r%0d=%0d ", i, regs_out[i]);
