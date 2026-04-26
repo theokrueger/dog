@@ -16,29 +16,30 @@ module alu(
     begin
         $display("alu op %d %d %d %d", Operation, ALU_ADD_IM_OP, A, B);
         unique case (Operation)
-            ALU_ADD_OP:
-            begin
-                Y <= A + B;
-            end
+            ALU_ADD_OP,
             ALU_ADD_IM_OP:
             begin
                 $display("adding");
                 Y <= A + B;
                 $display("y %d %d %d", Y, A, B);
             end
-            ALU_SUB_OP:
+            ALU_SUB_OP,
+            ALU_SUB_IM_OP:
             begin
                 Y <= A - B;
             end
-            ALU_MUL_OP:
+            ALU_MUL_OP,
+            ALU_MUL_IM_OP:
             begin
                 Y <= A*B;
             end
-            ALU_DIV_OP:
+            ALU_DIV_OP,
+            ALU_DIV_IM_OP:
             begin
                 Y <= A/B;
             end
-            ALU_MOD_OP:
+            ALU_MOD_OP,
+            ALU_MOD_IM_OP:
             begin
                 Y <= A % B;
             end

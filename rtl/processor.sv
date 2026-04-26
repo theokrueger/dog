@@ -28,7 +28,14 @@ module processor #(parameter N=4) (
 
       always_ff @(posedge clk) begin
         A_reg <= regs_out[As[8*i +: 4]];
-        B_reg <= (ops[4*i +: 4] == ALU_ADD_IM_OP) ? Bs[8*i +: 8] : regs_out[Bs[8*i +: 4]];
+        case(ops[4*i +: 4])
+          ALU_ADD_IM_OP, 
+          ALU_SUB_IM_OP,
+          ALU_MUL_IM_OP,
+          ALU_DIV_IM_OP,
+          ALU_MOD_IM_OP : B_reg <= Bs[8*i +: 8];
+          default       : B_reg <= regs_out[Bs[8*i +: 4]];
+        endcase;
         op_reg <= ops[4*i +: 4];
       end
       logic alu_zero;
@@ -42,6 +49,18 @@ module processor #(parameter N=4) (
               .Zero(alu_zero),
               .Sub_UF(alu_sub_uf)
           );
+
+
+      if (i == 0) begin
+        branch_unit bu(
+                       .CLK(CLK),
+                       .Operation(branch_op),
+                       .Address(branchaddr),
+                       .PC(PC),
+                       .PC_out(nextPC),
+                       .Zero(alu_zero),
+                       .Sub_UF(alu_sub_uf));
+      end
 
       assign write_sel[i] = Cs[8*i +: 4];
     end
