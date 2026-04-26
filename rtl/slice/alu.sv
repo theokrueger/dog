@@ -27,55 +27,55 @@ module alu(
             ALU_SUB_IM_OP:
             begin
                 Y <= A - B;
-            end;
+            end
             ALU_MUL_OP,
             ALU_MUL_IM_OP:
             begin
                 Y <= A*B;
-            end;
+            end
             ALU_DIV_OP,
             ALU_DIV_IM_OP:
             begin
                 Y <= A/B;
-            end;
+            end
             ALU_MOD_OP,
             ALU_MOD_IM_OP:
             begin
                 Y <= A % B;
-            end;
+            end
             ALU_AND_OP:
             begin
                 Y <= A & B;
-            end;
+            end
             ALU_OR_OP:
             begin
                 Y <= A | B;
-            end;
+            end
             ALU_EQ_OP:
             begin
                 if (A == B)
                     Y <= 8'b1;
                 else
                     Y <= 8'b0;
-            end;
+            end
             ALU_GT_OP:
             begin
                 if (A > B)
                     Y <= 8'b1;
                 else
                     Y <= 8'b0;
-            end;
+            end
             ALU_GTE_OP:
             begin
                 if (A >= B)
                     Y <= 8'b1;
                 else
                     Y <= 8'b0;
-            end;
+            end
             default:
             begin
                 Y <= 8'b0;
-            end;
+            end
         endcase
     end
 endmodule // alu
