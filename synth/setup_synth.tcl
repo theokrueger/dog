@@ -23,11 +23,11 @@ set target_library $SYNTH_DIR/gpdk045_slow.db
 
 # read potential verilog targets
 set RTL_DIR rtl
-read_verilog $RTL_DIR/slice/alu.sv
-read_verilog $RTL_DIR/slice/branch_unit.sv
-read_verilog $RTL_DIR/slice/instruction_decode.sv
-read_verilog $RTL_DIR/processor.sv
-read_verilog $RTL_DIR/register_file.sv
+read_sverilog $RTL_DIR/slice/alu.sv
+read_sverilog $RTL_DIR/slice/branch_unit.sv
+read_sverilog $RTL_DIR/slice/instruction_decode.sv
+read_sverilog $RTL_DIR/processor.sv
+read_sverilog $RTL_DIR/register_file.sv
 
 current_design $MOD_NAME
 
