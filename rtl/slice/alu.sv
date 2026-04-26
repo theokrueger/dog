@@ -12,63 +12,69 @@ module alu(
     assign Zero = (Y == 8'b0);
     assign Sub_UF = ((Operation == ALU_SUB_OP) && (B > A));
 
-    always @(posedge CLK)
+    always @(*)
     begin
+        $display("alu op %d %d %d %d", Operation, ALU_ADD_IM_OP, A, B);
         unique case (Operation)
             ALU_ADD_OP:
             begin
-                Y = A + B;
+                Y <= A + B;
+            end
+            ALU_ADD_IM_OP:
+            begin
+                $display("adding");
+                Y <= A + B;
+                $display("y %d %d %d", Y, A, B);
             end
             ALU_SUB_OP:
             begin
-                Y = A - B;
+                Y <= A - B;
             end
             ALU_MUL_OP:
             begin
-                Y = A*B;
+                Y <= A*B;
             end
             ALU_DIV_OP:
             begin
-                Y = A/B;
+                Y <= A/B;
             end
             ALU_MOD_OP:
             begin
-                Y = A % B;
+                Y <= A % B;
             end
             ALU_AND_OP:
             begin
-                Y = A & B;
+                Y <= A & B;
             end
             ALU_OR_OP:
             begin
-                Y = A | B;
+                Y <= A | B;
             end
             ALU_EQ_OP:
             begin
                 if (A == B)
-                    Y = 8'b1;
+                    Y <= 8'b1;
                 else
-                    Y = 8'b0;
+                    Y <= 8'b0;
             end
             ALU_GT_OP:
             begin
                 if (A > B)
-                    Y = 8'b1;
+                    Y <= 8'b1;
                 else
-                    Y = 8'b0;
+                    Y <= 8'b0;
             end
             ALU_GTE_OP:
             begin
                 if (A >= B)
-                    Y = 8'b1;
+                    Y <= 8'b1;
                 else
-                    Y = 8'b0;
+                    Y <= 8'b0;
             end
             default:
             begin
-                Y = 8'b0;
+                Y <= 8'b0;
             end
         endcase
-
     end
 endmodule // alu

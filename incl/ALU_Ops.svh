@@ -11,4 +11,4 @@ localparam ALU_EQ_OP = 4'b0111;
 localparam ALU_GT_OP = 4'b1000;
 localparam ALU_GTE_OP = 4'b1001;
 localparam ALU_MOD_OP = 4'b1010;
-
+localparam ALU_ADD_IM_OP = 4'b1011;

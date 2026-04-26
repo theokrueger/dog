@@ -1,6 +1,7 @@
 `define die(message) begin $display($sformatf message); $stop; end
 
 module instruction_decode_tb;
+`include "incl/ISA_Ops.svh"
 
     logic [9+28:0] word1;
     logic [4-1:0] ops1;
@@ -69,6 +70,13 @@ module instruction_decode_tb;
 
         word2 <= 76'b11111111;
         #1 assert (branchaddr2 == 8'b11111111) else `die(("no ba1 %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2));
+
+        // check with real values
+        word2 = {ISA_OP_ADD_IM, 8'b0, 8'b1101, 8'b1, ISA_OP_NOP, 8'b0, 8'b0, 8'b0, 2'b00, 8'b0 };
+        #1 assert (ops2[4+:4] == ISA_OP_ADD_IM) else `die(("no op2 %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2));
+        #1 assert (As2[8+:8] == 8'b0) else `die(("no as2 %b %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2, As2[8+:8]));
+        #1 assert (Bs2[8+:8] == 8'b1101) else `die(("no bs2 %b %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2, Bs2[8+:8]));
+        #1 assert (Cs2[8+:8] == 8'b1) else `die(("no cs2 %b %b %b %b %b %b %b", ops2, As2, Bs2, Cs2, branchop2, branchaddr2, Cs2[8+:8]));
 
         #2 $display("[PASS] Completed instruction_decode tests at %0d", $time);
 

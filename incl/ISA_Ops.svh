@@ -10,3 +10,4 @@ localparam ISA_OP_LADD = 4'b1000;
 localparam ISA_OP_LSUB = 4'b1001;
 localparam ISA_OP_LMUL = 4'b1010;
 localparam ISA_OP_LDIV = 4'b1011;
+localparam ISA_OP_ADD_IM = 4'b1100;
