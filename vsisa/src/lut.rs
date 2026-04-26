@@ -42,9 +42,15 @@ static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3
     "ldiv" => &[AR::Reg, AR::Reg, AR::Lit],
 };
 
+static INSTRUCTION_IS_BRANCH_LUT: phf::Map<&'static str, &'static bool> = phf_map! {
+    "jmp" => &true,
+    "jez" => &true,
+    "jgz" => &true,
+};
+
 /// Register translations
 static REGISTER_LUT: phf::Map<&'static str, &'static str> = phf_map! {
-    "rZ" => "00000001",
+    "rZ" => "00000000",
     "r0" => "00000010",
     "r1" => "00000011",
     "r2" => "00000100",
@@ -67,6 +73,14 @@ impl Lut {
 
     pub fn reg(s: &str) -> Option<&&str> {
         REGISTER_LUT.get(&s.to_lowercase())
+    }
+
+    pub fn is_branch_op(s: &str) -> bool {
+        if let Some(_) = INSTRUCTION_IS_BRANCH_LUT.get(&s.to_lowercase()) {
+            true
+        } else {
+            false
+        }
     }
 }
 

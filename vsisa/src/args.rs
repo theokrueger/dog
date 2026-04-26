@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::{fs, io::Error as IoError, path::PathBuf};
+use std::{fs, path::PathBuf};
 
 /// assembler for very-short-ISA
 #[derive(Parser, Debug)]

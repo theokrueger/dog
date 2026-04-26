@@ -9,10 +9,7 @@ use util::StringUtil;
 
 use clap::Parser as ClapParser;
 use pest::{Parser as PestParser, iterators::Pair};
-use std::{
-    collections::{HashMap, HashSet},
-    process,
-};
+use std::collections::{HashMap, HashSet};
 
 const LABEL_NOEXIST: i16 = -1; // placeholder value for labels that have not been found yet
 const NOP_PAD: &str = "NOP_PAD!!!!";
@@ -23,6 +20,64 @@ enum ParseError {
     BadArg,
     BadOp,
     Hazard,
+}
+
+/// Fill to EOW for N length
+fn fill_to_eow(icnt: &mut usize, n: u8, lstring: &mut String, pc: &u8) {
+    println!("Filling pc {pc}");
+    while *icnt < n.into() {
+        lstring.push_str(NOP_PAD);
+        *icnt += 1;
+    }
+}
+
+fn parse_line_helper(
+    line: &Pair<Rule>,
+    pc: &mut u8,
+    labels: &mut HashMap<String, i16>,
+    r_hazards: &mut HashSet<String>,
+    w_hazards: &mut HashSet<String>,
+    icnt: &mut usize,
+    lstring: &mut String,
+    n: u8,
+    out: &mut String,
+) {
+    match parse_line(line, pc, labels, r_hazards, w_hazards) {
+        // no errors
+        Ok((instr, was_instruction, was_branch)) => {
+            if was_instruction {
+                *out += instr.as_str();
+                *icnt += 1;
+                if was_branch {
+                    fill_to_eow(icnt, n, lstring, &pc);
+                }
+            }
+        }
+        Err(e) => match e {
+            // hazard encountered, fill to EOL and retry
+            ParseError::Hazard => {
+                fill_to_eow(icnt, n, lstring, &pc);
+
+                // clear
+                *icnt = 0;
+                lstring.push('\n');
+                out.push_str(lstring.as_str());
+                *lstring = "".to_string();
+                *w_hazards = HashSet::new();
+                *r_hazards = HashSet::new();
+                *pc += 1;
+
+                // retry
+                parse_line_helper(
+                    line, pc, labels, r_hazards, w_hazards, icnt, lstring, n, out,
+                );
+            }
+            // user fucked up
+            _ => {
+                panic!("{:?}", e);
+            }
+        },
+    }
 }
 
 /// parse an entire asm file, loaded from user arguments
@@ -48,42 +103,28 @@ fn main() -> Result<(), ParseError> {
     for line in file.into_inner() {
         match line.as_rule() {
             Rule::line => {
-                match parse_line(line, &mut pc, &mut labels, &mut r_hazards, &mut w_hazards) {
-                    // no errors
-                    Ok((instr, was_instruction)) => {
-                        if was_instruction {
-                            out += instr.as_str();
-                            icnt += 1;
-                        }
-                    }
-                    Err(e) => match e {
-                        // hazard encountered, fill to EOL
-                        ParseError::Hazard => {
-                            while icnt < args.wordlength {
-                                lstring.push_str(NOP_PAD);
-                                icnt += 1;
-                            }
-                        }
-                        // user fucked up
-                        _ => {
-                            panic!("{:?}", e);
-                        }
-                    },
-                }
+                parse_line_helper(
+                    &line,
+                    &mut pc,
+                    &mut labels,
+                    &mut r_hazards,
+                    &mut w_hazards,
+                    &mut icnt,
+                    &mut lstring,
+                    args.wordlength,
+                    &mut out,
+                );
             }
             Rule::EOI => {
                 // fill to EOL
                 if icnt > 0 {
-                    while icnt < args.wordlength {
-                        lstring.push_str(NOP_PAD);
-                        icnt += 1;
-                    }
+                    fill_to_eow(&mut icnt, args.wordlength, &mut lstring, &pc);
                 }
             }
             _ => unreachable!("{line}"),
         }
         // carriage return on saturated instruction word
-        if icnt >= args.wordlength {
+        if icnt >= args.wordlength.into() {
             icnt = 0;
             lstring.push('\n');
             out.push_str(lstring.as_str());
@@ -112,22 +153,25 @@ fn main() -> Result<(), ParseError> {
 }
 
 /// Parse a single line and update global state
-/// Returns whether line was instruction or not
+/// Returns (line, was_instruction, was_branch)
 fn parse_line(
-    line: Pair<Rule>,
+    line: &Pair<Rule>,
     pc: &u8,
     labels: &mut HashMap<String, i16>,
     r_hazards: &mut HashSet<String>,
     w_hazards: &mut HashSet<String>,
-) -> Result<(String, bool), ParseError> {
+) -> Result<(String, bool, bool), ParseError> {
     let mut out: String = String::new();
     let lstr = line.as_str().to_string();
-    let mut inr = line.into_inner();
+    let mut inr = line.clone().into_inner();
     let len = inr.len();
+
+    let mut pending_w_haz: Vec<String> = Vec::new();
+    let mut pending_r_haz: Vec<String> = Vec::new();
 
     if len == 0 {
         // comment or blank
-        return Ok((out, false));
+        return Ok((out, false, false));
     }
 
     let first = inr.nth(0).unwrap();
@@ -136,14 +180,17 @@ fn parse_line(
         assert!(first.as_rule() == Rule::label, "error in {lstr}");
         println!("Label '{}' found at pc {pc}", first.as_str());
         labels.insert(first.as_str().to_string(), *pc as i16);
-        return Ok((out, false));
+        return Ok((out, false, false));
     }
     // otherwise must be instruction
     assert!(first.as_rule() == Rule::instr);
+    let mut was_branch = false;
     if let Some(s) = Lut::instr(first.as_str())
         && let Some(restrict) = Lut::instr_restrict(first.as_str())
     {
         out.push_str(*s);
+
+        was_branch = Lut::is_branch_op(first.as_str());
 
         // add arguments
         let mut i: usize = 0;
@@ -169,6 +216,21 @@ fn parse_line(
                 Rule::reg => {
                     if let Some(r) = Lut::reg(field.as_str()) {
                         out.push_str(*r);
+                        // check hazards
+                        // target (write)
+                        if i == 0 {
+                            if w_hazards.contains(*r) || r_hazards.contains(*r) {
+                                return Err(ParseError::Hazard);
+                            }
+                            pending_w_haz.push(r.to_string());
+                        }
+                        // operand (read)
+                        else {
+                            if w_hazards.contains(*r) {
+                                return Err(ParseError::Hazard);
+                            }
+                            pending_r_haz.push(r.to_string());
+                        }
                     } else {
                         println!("invalid register '{}' in '{lstr}'.", field.as_str(),);
                         return Err(ParseError::BadArg);
@@ -182,7 +244,7 @@ fn parse_line(
                         "0d" => StringUtil::dec_to_dec(&field.as_str()[2..]),
                         _ => unreachable!(),
                     };
-                    out.push_str(format!("{:0<8b}", dec).as_str());
+                    out.push_str(format!("{:0>8b}", dec).as_str());
                 }
                 // label
                 Rule::label => {
@@ -209,7 +271,16 @@ fn parse_line(
 
         return Err(ParseError::BadOp);
     }
-    return Ok((out, true));
+
+    // push pending hazards
+    for s in pending_w_haz {
+        w_hazards.insert(s);
+    }
+    for s in pending_r_haz {
+        r_hazards.insert(s);
+    }
+
+    return Ok((out, true, was_branch));
 }
 
 #[cfg(test)]
