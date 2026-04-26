@@ -26,7 +26,6 @@ set RTL_DIR rtl
 read_verilog $RTL_DIR/slice/alu.sv
 read_verilog $RTL_DIR/slice/branch_unit.sv
 read_verilog $RTL_DIR/slice/instruction_decode.sv
-read_verilog $RTL_DIR/slice/slice.sv
 read_verilog $RTL_DIR/processor.sv
 read_verilog $RTL_DIR/register_file.sv
 
