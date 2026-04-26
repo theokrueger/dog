@@ -3,7 +3,7 @@ module alu(
         input [3:0]      Operation,
         input [7:0]      A,
         input [7:0]      B,
-        output  [7:0] Y,
+        output reg [7:0] Y,
         output       Zero,
         output       Sub_UF
     );
