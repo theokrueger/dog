@@ -10,6 +10,10 @@ pub struct Args {
 
     /// output binary file
     out_file: PathBuf,
+
+    /// Wordlength in untils of instructions
+    #[arg(short, long, default_value_t = 1)]
+    pub wordlength: u8,
 }
 
 impl Args {

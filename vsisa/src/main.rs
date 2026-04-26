@@ -4,6 +4,8 @@ mod lut;
 use lut::{ArgRestrict, Lut};
 mod parse;
 use parse::{Rule, VsisaParser};
+mod util;
+use util::StringUtil;
 
 use clap::Parser as ClapParser;
 use pest::{Parser as PestParser, iterators::Pair};
@@ -16,6 +18,7 @@ enum ParseError {
     InvalidLabel,
     BadArg,
     BadOp,
+    Hazard,
 }
 
 /// parse an entire asm file, loaded from user arguments
@@ -33,10 +36,21 @@ fn main() -> Result<(), ParseError> {
     // assemble
     let mut pc: u8 = 0; // program counter
     let mut labels: HashMap<String, i16> = HashMap::new(); // store program counter of label
+    let mut lstring: String = "".to_string();
+    let mut icnt = 0; //
     for line in file.into_inner() {
+        if icnt == args.wordlength {
+            icnt = 0;
+            lstring.push('\n');
+            out.push_str(lstring.as_str());
+            lstring = "".to_string();
+        }
         match line.as_rule() {
             Rule::line => {
-                parse_line(line, &mut out, &mut pc, &mut labels)?;
+                //                if let Err(e) = parse_line(line, &mut out, &mut pc, &mut labels) {
+                let was_instruction = parse_line(line, &mut lstring, &mut pc, &mut labels)?;
+                icnt += was_instruction as u8;
+                //                }
             }
             Rule::EOI => (),
             _ => unreachable!("{line}"),
@@ -58,19 +72,20 @@ fn main() -> Result<(), ParseError> {
 }
 
 /// Parse a single line and update global state
+/// Returns whether line was instruction or not
 fn parse_line(
     line: Pair<Rule>,
     out: &mut String,
     pc: &mut u8,
     labels: &mut HashMap<String, i16>,
-) -> Result<(), ParseError> {
+) -> Result<bool, ParseError> {
     let lstr = line.as_str().to_string();
     let mut inr = line.into_inner();
     let len = inr.len();
 
     if len == 0 {
         // comment or blank
-        return Ok(());
+        return Ok(false);
     }
 
     let first = inr.nth(0).unwrap();
@@ -79,7 +94,7 @@ fn parse_line(
         assert!(first.as_rule() == Rule::label, "error in {lstr}");
         println!("Label '{}' found at pc {pc}", first.as_str());
         labels.insert(first.as_str().to_string(), *pc as i16);
-        return Ok(());
+        return Ok(false);
     }
     // otherwise must be instruction
     assert!(first.as_rule() == Rule::instr);
@@ -120,9 +135,9 @@ fn parse_line(
                 // literal
                 Rule::literal => {
                     let dec = match &field.as_str()[..2] {
-                        "0b" => 12, // TODO convert these :D
-                        "0x" => 13,
-                        "0d" => 14,
+                        "0b" => StringUtil::bin_to_dec(&field.as_str()[2..]),
+                        "0x" => StringUtil::hex_to_dec(&field.as_str()[2..]),
+                        "0d" => StringUtil::dec_to_dec(&field.as_str()[2..]),
                         _ => unreachable!(),
                     };
                     out.push_str(format!("{:0<8b}", dec).as_str());
@@ -154,8 +169,7 @@ fn parse_line(
     }
 
     *pc += 1;
-    out.push('\n');
-    return Ok(());
+    return Ok(true);
 }
 
 #[cfg(test)]

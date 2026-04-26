@@ -3,18 +3,18 @@ use phf::phf_map;
 
 /// Instruction translations
 static INSTRUCTION_LUT: phf::Map<&'static str, &'static str> = phf_map! {
-    "nop" => "0000",
-    "add" => "0001",
-    "sub" => "0010",
-    "mul" => "0011",
-    "div" => "0100",
-    "jmp" => "0101",
-    "jez" => "0110",
-    "jgz" => "0111",
-    "ladd" => "1000",
-    "lsub" => "1001",
-    "lmul" => "1010",
-    "ldiv" => "1011",
+    "nop" =>  "00000000",
+    "add" =>  "00000001",
+    "sub" =>  "00000010",
+    "mul" =>  "00000011",
+    "div" =>  "00000100",
+    "jmp" =>  "00000101",
+    "jez" =>  "00000110",
+    "jgz" =>  "00000111",
+    "ladd" => "00001000",
+    "lsub" => "00001001",
+    "lmul" => "00001010",
+    "ldiv" => "00001011",
 };
 
 #[derive(PartialEq)]
@@ -45,10 +45,13 @@ static INSTRUCTION_RESTRICT_LUT: phf::Map<&'static str, &'static [ArgRestrict; 3
 /// Register translations
 static REGISTER_LUT: phf::Map<&'static str, &'static str> = phf_map! {
     "rZ" => "00000001",
-    "r0" => "00000002",
-    "r1" => "00000003",
-    "r2" => "00000004",
-    "r3" => "00000005",
+    "r0" => "00000010",
+    "r1" => "00000011",
+    "r2" => "00000100",
+    "r3" => "00000101",
+    "r4" => "00000110",
+    "r5" => "00000111",
+    "r6" => "00001000",
 };
 
 pub struct Lut;

@@ -1,4 +1,4 @@
-module processor #(parameter N=4) (
+module processor #(parameter N=4, parameter Regs=16) (
   input wire clk,
   input wire rst,
   input [9+28*N:0] word,
