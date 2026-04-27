@@ -1,4 +1,7 @@
 # generate a testbench
+cd "$(dirname "$0")" || exit
+
+cp ../generate_prime_factorization.py ./
 python generate_inputs.py $1 $2 > test1_tb.sv
 
 # run the tb to get the vcd

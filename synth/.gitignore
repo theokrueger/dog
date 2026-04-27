@@ -3,3 +3,4 @@ slow_vdd1v0_basicCells.v
 decode.vcd
 sim
 netlist.v
+generate_prime_factorization.py
