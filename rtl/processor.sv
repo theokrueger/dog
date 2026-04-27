@@ -1,4 +1,4 @@
-module processor #(parameter N=4, parameter Regs=16) (
+module processor #(parameter N, parameter Regs) (
         input wire CLK,
         input wire rst,
         input [10+28*N:0] word,
@@ -65,7 +65,7 @@ module processor #(parameter N=4, parameter Regs=16) (
                                 .Sub_UF(alu_sub_uf));
             end
 
-            assign write_sel[i] = Cs[8*i+3: 8*i];
+            assign write_sel[i] = Cs[8*i+7 : 8*i];
         end
         for (i=0; i<Regs; i=i+1) begin
             assign reg_state[8*i+7:8*i] = regs_out[i];
