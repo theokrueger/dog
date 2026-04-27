@@ -21,7 +21,6 @@ module processor #(parameter N=4, parameter Regs=16) (
     register_file #(.N(N), .Regs(Regs), .Reg_address_bits(reg_bits)) rf (.CLK(CLK), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
     genvar i;
-    wire [7:0] next_PC;
     generate
         for (i=0; i<N; i=i+1) begin
             reg [7:0] A_reg;
@@ -54,7 +53,7 @@ module processor #(parameter N=4, parameter Regs=16) (
                 );
 
 
-            if (i == 0) begin
+            if (i == N-1) begin
                 branch_unit bu(
                                 .CLK(CLK),
                                 .Operation(branchop),

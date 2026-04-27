@@ -20,12 +20,12 @@ module register_file #(parameter N=4, parameter Regs=16, parameter Reg_address_b
             end
         end
         else begin
-            $display("not resetting, setting stuff");
+            // $display("not resetting, setting stuff");
             for (i=0; i<N; i=i+1) begin
                 // ignore 0
                 if (write_sel[i] != 0) begin
                     registers[write_sel[i]] = write_data[i];
-                    $display("setting %d to %d", write_sel[i], write_data[i]);
+                    // $display("setting %d to %d", write_sel[i], write_data[i]);
                 end
             end
         end // else: !if(rst)

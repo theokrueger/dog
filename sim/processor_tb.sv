@@ -87,7 +87,7 @@ module processor_tb;
         #1;
         assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'd14, 8'd13, 8'b0}, 1);
         // // done
-        #1 $display("[PASS] Completed slice Test at %0d",$time);
+        #1 $display("[PASS] Completed processor test at %0d",$time);
         $finish;
     end
 

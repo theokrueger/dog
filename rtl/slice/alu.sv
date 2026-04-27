@@ -4,24 +4,20 @@ module alu(
         input [7:0]      A,
         input [7:0]      B,
         output reg [7:0] Y,
-        output       Zero,
+        output reg   Zero,
         output       Sub_UF
     );
 `include "incl/ALU_Ops.svh"
 
-    assign Zero = (Y == 8'b0);
     assign Sub_UF = ((Operation == ALU_SUB_OP) && (B > A));
 
     always @(*)
     begin
-        $display("alu op %d %d %d", Operation, A, B);
         case (Operation)
             ALU_ADD_OP,
             ALU_ADD_IM_OP:
             begin
-                $display("adding");
                 Y = A + B;
-                $display("y %d %d %d", Y, A, B);
             end
             ALU_SUB_OP,
             ALU_SUB_IM_OP:
@@ -77,5 +73,6 @@ module alu(
                 Y = 8'b0;
             end
         endcase
+        Zero = Y == 0;
     end
 endmodule // alu

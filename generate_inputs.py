@@ -65,9 +65,9 @@ class Processor():
         res = []
         pc = 0
         while pc < len(program_decoded):
-            res2 = [pc, program_split[pc]]
+            res2 = [pc, program_split[pc], program_decoded[pc]]
             pc = self.step(pc, program_decoded[pc])
-            res2 += [self.regs, pc]
+            res2 += [[*self.regs], pc]
             res.append(res2)
 
         return res
@@ -143,27 +143,28 @@ class Processor():
 
         
 
-def generate_testbench(name, N):
+def generate_testbench(name, N, value):
     
-    program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
+    program = "\n".join([word_into_bin(word, 4) for word in generate(4, value)])
     
     proc = Processor(N, N+4)
     run = proc.run_program(program)
     
     content = ""
 
-    for oldpc, inst, regs, newpc in run:
+    for oldpc, inst, inst_decoded, regs, newpc in run:
         
         regvalue = 0
         for i, reg in enumerate(regs):
             regvalue += reg << (8*i)
         
         content += f"""
-word = 'b{inst};
-PC = 'd{oldpc};
-@(posedge clk);
-#1;
-assert_correct('d{regvalue}, {newpc});
+        // {inst_decoded}
+        word = 'd{int(inst, 2)};
+        PC = 'd{oldpc};
+        @(posedge clk);
+        #1;
+        assert_correct('d{regvalue}, {newpc});
 """
     
     
@@ -189,7 +190,7 @@ module {name}_tb;
     logic [7:0] exp_reg_state [regs];
 
     processor #(.N(n), .Regs(regs)) dut (
-                  .clk(clk),
+                  .CLK(clk),
                   .rst(rst),
                   .word(word),
                   .PC(PC),
@@ -243,6 +244,9 @@ module {name}_tb;
         assert_correct('0, 1);
         rst <= 0;
 {content}
+
+        $display("[PASS] Completed {name} test at %0d",$time);
+        $finish;
     end
 endmodule
 """
@@ -253,10 +257,10 @@ if __name__ == "__main__":
     # program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
     
     # proc = Processor(4, 16)
-    # proc.run_program(program)
-    # print(proc.regs)
+    # run = proc.run_program(program)
+    # print("\n".join(map(lambda a: str(a[2]) + "\n" + str(a[3]), run)))
 
 
-    print(generate_testbench("test1", 4))
+    print(generate_testbench("test1", 4, 233))
 
 
