@@ -12,7 +12,7 @@ set PNR_DIR ./pnr
 file mkdir $PNR_DIR
 
 # root mod to synthesize
-set MOD_NAME register_file
+set MOD_NAME instruction_decode
 
 # initialize link and synthetic libraries
 # is synthetic library global??? lol.
@@ -25,9 +25,9 @@ set target_library $SYNTH_DIR/gpdk045_slow.db
 set RTL_DIR rtl
 #read_sverilog $RTL_DIR/slice/alu.sv
 #read_sverilog $RTL_DIR/slice/branch_unit.sv
-#read_sverilog $RTL_DIR/slice/instruction_decode.sv
+read_sverilog $RTL_DIR/slice/instruction_decode.sv
 #read_sverilog $RTL_DIR/processor.sv
-read_sverilog $RTL_DIR/register_file.sv
+#read_sverilog $RTL_DIR/register_file.sv
 
 current_design $MOD_NAME
 
