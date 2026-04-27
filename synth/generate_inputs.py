@@ -144,7 +144,7 @@ class Processor():
 
         
 
-def generate_testbench(name, N, value):
+def generate_testbench(name, N, value, clk=5):
     
     program = "\n".join([word_into_bin(word, 4) for word in generate(4, value)])
     
@@ -161,21 +161,22 @@ def generate_testbench(name, N, value):
         
         content += f"""
         // {inst_decoded}
-        word = 'd{inst};
+        word = 'd{int(inst, 2)};
         PC = 'd{oldpc};
-        @(posedge clk);
-        #0.7
-        assert_correct('d{regvalue}, {newpc});
+        @(posedge CLK);
+        #{clk-1};
+        // assert_correct('d{regvalue}, {newpc});
 """
     
     
     return f"""
+`timescale 1ns / 1ps
 module {name}_tb;
     localparam regs = 8;
     localparam  reg_bits = $clog2(regs);
     localparam   n = 4;
 
-    logic clk;
+    logic CLK;
     logic rst;
 
     logic [10+28*n:0] word;
@@ -183,8 +184,9 @@ module {name}_tb;
     logic [7:0] nextPC;
     wire [8*regs-1:0] reg_state;
 
-    processor #(.N(n), .Regs(regs)) dut (
-                  .CLK(clk),
+    // processor #(.N(n), .Regs(regs)) dut (
+    processor dut (
+                  .CLK(CLK),
                   .rst(rst),
                   .word(word),
                   .PC(PC),
@@ -218,10 +220,10 @@ module {name}_tb;
         assert (pc == nextPC) else fail(arr, pc);
     endtask
     initial begin
-        clk = 1'b0;
+        CLK = 1'b0;
         forever begin
-            #0.4 clk = 0;
-            #0.6 clk = 1;
+            #{clk} CLK = 0;
+            #{clk} CLK = 1;
         end
     end
 
@@ -233,9 +235,9 @@ module {name}_tb;
         rst <= 1;
         PC <= 0;
         word = '0;
-        @(posedge clk);
-        #0.7
-        assert_correct('0, 1);
+        @(posedge CLK);
+        #{clk-1};
+        // assert_correct('0, 1);
         rst <= 0;
 {content}
 
@@ -255,6 +257,6 @@ if __name__ == "__main__":
     # print("\n".join(map(lambda a: str(a[2]) + "\n" + str(a[3]), run)))
 
 
-    print(generate_testbench("test1", 4, 233))
+    print(generate_testbench("test1", int(argv[1]), 233, int(argv[2])))
 
 

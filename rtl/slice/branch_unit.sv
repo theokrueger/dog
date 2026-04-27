@@ -1,5 +1,6 @@
 module branch_unit(
         input CLK,
+        input rst,
         input [2:0]      Operation,
         input [7:0]      Address,
         input [7:0]      PC,
@@ -35,5 +36,8 @@ module branch_unit(
                 $finish;
             end
         endcase // case (Operation)
+        if (rst == 1) begin
+            PC_out = 8'b0;
+        end
     end
 endmodule // branch_unit

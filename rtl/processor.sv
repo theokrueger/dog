@@ -56,6 +56,7 @@ module processor #(parameter N=4, parameter Regs=16) (
             if (i == N-1) begin
                 branch_unit bu(
                                 .CLK(CLK),
+                                .rst(rst),
                                 .Operation(branchop),
                                 .Address(branchaddr),
                                 .PC(PC),

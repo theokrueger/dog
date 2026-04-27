@@ -134,5 +134,7 @@ def word_into_bin(word, N):
 
 if __name__ == "__main__":
     # print(generate(4))
-    print("\n".join([word_into_bin(word, 4) for word in generate(4)]))
+    import sys
+    N=int(sys.argv[1] or 4)
+    print("\n".join(reversed([word_into_bin(word, N) for word in generate(N)])))
     # "\n".join([word_into_bin(word, 4) for word in generate(4)])
