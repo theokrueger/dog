@@ -146,7 +146,7 @@ class Processor():
 
 def generate_testbench(name, N, value, clk=5):
     
-    program = "\n".join([word_into_bin(word, 4) for word in generate(4, value)])
+    program = "\n".join([word_into_bin(word, N) for word in generate(N, value)])
     
     proc = Processor(N, N+4)
     run = proc.run_program(program)
@@ -230,6 +230,8 @@ module {name}_tb;
     // test cases
     initial
     begin
+        $dumpfile("decode.vcd");
+        $dumpvars(0, test1_tb);
 
         $display("[INFO] Testing processor {name}");
         rst <= 1;

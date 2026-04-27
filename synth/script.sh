@@ -1,7 +1,6 @@
 # generate a testbench
 cd "$(dirname "$0")" || exit
 
-cp ../generate_prime_factorization.py ./
 python generate_inputs.py $1 $2 > test1_tb.sv
 
 # run the tb to get the vcd
@@ -12,5 +11,5 @@ vvp sim
 sudo docker run -i -v .:/data opensta_ubuntu22.04 -exit /data/sta.tcl
 
 # cleanup
-rm sim
-rm decode.vcd
+# rm sim
+# rm decode.vcd
