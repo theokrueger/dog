@@ -61,9 +61,16 @@ class Processor():
     def run_program(self, program: str):
 
         program_decoded = self.decode_program(program) # todo
+        program_split = program.splitlines()
+        res = []
         pc = 0
         while pc < len(program_decoded):
+            res2 = [pc, program_split[pc]]
             pc = self.step(pc, program_decoded[pc])
+            res2 += [self.regs, pc]
+            res.append(res2)
+
+        return res
 
         
     def step(self, pc, instructions: list):
@@ -137,42 +144,84 @@ class Processor():
         
 
 def generate_testbench(name, N):
-    start = f"""
+    
+    program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
+    
+    proc = Processor(N, N+4)
+    run = proc.run_program(program)
+    
+    content = ""
+
+    for oldpc, inst, regs, newpc in run:
+        
+        regvalue = 0
+        for i, reg in enumerate(regs):
+            regvalue += reg << (8*i)
+        
+        content += f"""
+word = 'b{inst};
+PC = 'd{oldpc};
+@(posedge clk);
+#1;
+assert_correct('d{regvalue}, {newpc});
+"""
+    
+    
+    return f"""
 module {name}_tb;
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
 
+    localparam regs = {N+4};
+    localparam  reg_bits = $clog2(regs);
+    localparam   n = {N};
+
     logic clk;
     logic rst;
 
-    logic [10+28*{N}:0] word;
+    logic [10+28*n:0] word;
     logic [7:0] PC;
     logic [7:0] nextPC;
-    wire [7:0] reg_state [0:15];
+    wire [7:0] reg_state [regs];
 
     // expected values for checking
     logic [7:0] exp_nextPC;
-    logic [7:0] exp_reg_state [0:15];
+    logic [7:0] exp_reg_state [regs];
 
-    processor #(.N({N})) dut (
-        .clk(clk),
-        .rst(rst),
-        .word(word),
-        .PC(PC),
-        .nextPC(nextPC),
-        .reg_state(reg_state)
-    );
+    processor #(.N(n), .Regs(regs)) dut (
+                  .clk(clk),
+                  .rst(rst),
+                  .word(word),
+                  .PC(PC),
+                  .nextPC(nextPC),
+                  .reg_state(reg_state)
+              );
 
     integer i;
     task dump();
-        $write("Register state: ");
-        for (int i = 0; i < 16; i++) begin
-            $write("r%0d=%0d ", i, reg_state[i]);
+        $write("  registers: ");
+        for (int i = 0; i < regs; i++) begin
+            $write("    r%0d=%0d ", i, reg_state[i]);
         end
-        $write("\n");
-
+        $write("\\n");
     endtask; // dump
-
+    task fail(input logic [8*regs-1:0] arr, pc);
+        $display("[ ERR] Failure in processor test case at #%0d", $time);
+        $display("  pc real %d expected %d", nextPC, pc);
+        $write("  expected: ");
+        for (int i = 0; i < regs; i++) begin
+            $write("    r%0d=%0d ", i, arr[8*i +: 8]);
+        end
+        $write("\\n");
+        dump();
+        $finish;
+    endtask
+    task assert_correct(input logic [8*regs-1:0] arr, pc);
+        for (int i=0; i<regs; i++) begin
+            assert (arr[8*i +: 8] == reg_state[i]) else fail(arr, pc);
+        end
+        assert (pc == nextPC) else fail(arr, pc);
+    endtask
     initial begin
         clk = 1'b0;
         forever begin
@@ -181,18 +230,33 @@ module {name}_tb;
         end
     end
 
+    // test cases
     initial
     begin
 
+        $display("[INFO] Testing processor {name}");
+        rst <= 1;
+        PC <= 0;
+        word = '0;
+        @(posedge clk);
+        #1;
+        assert_correct('0, 1);
+        rst <= 0;
+{content}
+    end
+endmodule
 """
 
     
 
 if __name__ == "__main__":
-    program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
+    # program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
     
-    proc = Processor(4, 16)
-    proc.run_program(program)
-    print(proc.regs)
+    # proc = Processor(4, 16)
+    # proc.run_program(program)
+    # print(proc.regs)
+
+
+    print(generate_testbench("test1", 4))
 
 

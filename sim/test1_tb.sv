@@ -1,10 +1,11 @@
-module processor_tb;
+
+module test1_tb;
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
 
-    localparam regs = 16;
+    localparam regs = 8;
     localparam  reg_bits = $clog2(regs);
-    localparam   n = 2;
+    localparam   n = 4;
 
     logic clk;
     logic rst;
@@ -19,7 +20,7 @@ module processor_tb;
     logic [7:0] exp_reg_state [regs];
 
     processor #(.N(n), .Regs(regs)) dut (
-                  .CLK(clk),
+                  .clk(clk),
                   .rst(rst),
                   .word(word),
                   .PC(PC),
@@ -64,7 +65,7 @@ module processor_tb;
     initial
     begin
 
-        $display("[INFO] Testing processor");
+        $display("[INFO] Testing processor test1");
         rst <= 1;
         PC <= 0;
         word = '0;
@@ -72,24 +73,49 @@ module processor_tb;
         #1;
         assert_correct('0, 1);
         rst <= 0;
-        // source1 source2 dest
-        //
-        // word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
-        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd1, ALU_ADD_IM_OP, 8'b0, 8'd14, 8'd2, 3'b0, 8'b0};
-        PC = 0;
-        @(posedge clk);
-        #1;
-        $display("pc %d", nextPC);
-        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd14, 8'd13, 8'b0}, 1);
 
-        word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd3, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
-        @(posedge clk);
-        #1;
-        assert_correct({8'b0, 8'd0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'd13, 8'd14, 8'd13, 8'b0}, 1);
-        // // done
-        #1 $display("[PASS] Completed slice Test at %0d",$time);
-        $finish;
+word = 'b101100000000111010000000000110110000000000000010000000101011000000001110010000000011000000000000000000000000000010000000101;
+PC = 'd0;
+@(posedge clk);
+#1;
+assert_correct('d0, 5);
+
+word = 'b100100000011000000100000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000001;
+PC = 'd5;
+@(posedge clk);
+#1;
+assert_correct('d0, 1);
+
+word = 'b101100000010000000000000010010110000001000000001000001011011000000100000001000000110101100000010000000110000011100000000000;
+PC = 'd1;
+@(posedge clk);
+#1;
+assert_correct('d0, 2);
+
+word = 'b101000000001000001000000010010100000000100000101000001011010000000010000011000000110101000000001000001110000011100000000000;
+PC = 'd2;
+@(posedge clk);
+#1;
+assert_correct('d0, 3);
+
+word = 'b001100000111000001000000010000110000011000000101000001010000000000000000000000000000000000000000000000000000000000000000000;
+PC = 'd3;
+@(posedge clk);
+#1;
+assert_correct('d0, 4);
+
+word = 'b001100000101000001000000010010110000001000000100000000100000000000000000000000000000000000000000000000000000000001100000111;
+PC = 'd4;
+@(posedge clk);
+#1;
+assert_correct('d0, 7);
+
+word = 'b101100000000000000010000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000;
+PC = 'd7;
+@(posedge clk);
+#1;
+assert_correct('d0, 8);
+
     end
-
-endmodule // slice_tb
+endmodule
 
