@@ -12,4 +12,4 @@ sim/register_file_tb.sv
 sim/processor_tb.sv
 
 sim/test1_tb.sv
-
+sim/testpf_4.sv
