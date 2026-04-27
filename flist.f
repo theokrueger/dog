@@ -13,3 +13,4 @@ sim/processor_tb.sv
 
 sim/test1_tb.sv
 sim/testpf_4.sv
+sim/testpf_72.sv

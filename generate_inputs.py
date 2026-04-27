@@ -248,13 +248,22 @@ endmodule
     
 
 if __name__ == "__main__":
-    # program = "\n".join([word_into_bin(word, 4) for word in generate(4, 232)])
+    # program = "\n".join([word_into_bin(word, 1) for word in generate(1, 233)])
     
-    # proc = Processor(4, 16)
+    # proc = Processor(1, 5)
     # run = proc.run_program(program)
     # print("\n".join(map(lambda a: str(a[2]) + "\n" + str(a[3]), run)))
 
 
-    print(generate_testbench("test1", 4, 233))
+    for i in range(2, 129):
+        program = "\n".join([word_into_bin(word, i) for word in generate(i, 233)])
+    
+        proc = Processor(i, i+4)
+        run = proc.run_program(program)
+        print(proc.steps)
+
+    
+
+    # print(generate_testbench("test1", 4, 233))
 
 

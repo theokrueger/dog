@@ -77,17 +77,21 @@ exit:
 def generate(N, p=233):
     cz = coalesce_zeros(N)
 
-    loopbody = 1
-    loopstart = 3+len(cz)
+    loopbody = ({1: 3, 2: 2}).get(N, 1)
+    loopstart = loopbody + 3 +len(cz)
     notfound = loopstart + 1
     found = notfound + 1
     exit = found + 1
 
-    cz[-1][-1] = [Ops.ALU_ADD_IM_OP, 2, N, 2] # increment i
-    cz[-1].append([Ops.BRANCH_ZERO_OP, found])
+    if len(cz):
+        cz[-1][-1] = [Ops.ALU_ADD_IM_OP, 2, N, 2] # increment i
+        cz[-1].append([Ops.BRANCH_ZERO_OP, found])
+    else:
+        cz = [[[Ops.ALU_ADD_IM_OP, 2, N, 2], [Ops.BRANCH_NO_OP, 0]],
+            [[Ops.ALU_ADD_IM_OP, 4, 0, 4], [Ops.BRANCH_ZERO_OP, found]]]
 
     nob = [Ops.BRANCH_NO_OP, 0]
-    startops = [[Ops.ALU_ADD_IM_OP, 0, p, 1], [Ops.ALU_ADD_IM_OP, 0, 2, 2], [Ops.ALU_ADD_IM_OP, 0, p-4, 3], [Ops.BRANCH_UNCONDITIONAL_OP, loopstart]]
+    startops = [[Ops.ALU_ADD_IM_OP, 0, p, 1], [Ops.ALU_ADD_IM_OP, 0, 2, 2], [Ops.ALU_ADD_IM_OP, 0, p-N, 3], [Ops.BRANCH_UNCONDITIONAL_OP, loopstart]]
     start = [
         [[startops[0], nob], [startops[1], nob], [startops[2], startops[3]]],
         [[startops[0], startops[1], nob], [startops[2], startops[3]]],
@@ -99,6 +103,7 @@ def generate(N, p=233):
         *(start[N-1] if N < 3 else start[2]),
         [*[[Ops.ALU_ADD_IM_OP, 2, i, 4+i] for i in range(N)], [Ops.BRANCH_NO_OP, 0]],# add offsets
         [*[[Ops.ALU_MOD_OP, 1, 4+i, 4+i] for i in range(N)], [Ops.BRANCH_NO_OP, 0]], # check modulo
+        [*[[Ops.ALU_GT_OP, 4+i, 0, 4+i] for i in range(N)], [Ops.BRANCH_NO_OP, 0]], # normalize
         *cz,
         [
             [Ops.ALU_GTE_OP, 3, 2, 4],
@@ -120,7 +125,7 @@ def coalesce_zeros(N):
     # pair registers until there's only one left
     while len(regs) > 1:
         can_kill = min(floor(len(regs)/2), N)
-        res.append([*[[Ops.ALU_MUL_OP, regs[-i-1], regs[i], regs[i]] for i in range(can_kill)], [Ops.BRANCH_NO_OP, 0]])
+        res.append([*[[Ops.ALU_AND_OP, regs[-i-1], regs[i], regs[i]] for i in range(can_kill)], [Ops.BRANCH_NO_OP, 0]])
         regs = regs[:-can_kill]
 
     return res
@@ -135,6 +140,7 @@ def word_into_bin(word, N):
 if __name__ == "__main__":
     # print(generate(4))
     import sys
-    N=int(sys.argv[1] or 4)
-    print("\n".join(reversed([word_into_bin(word, N) for word in generate(N)])))
+    N=int(sys.argv[1] if len(sys.argv) > 1 else 4)
+    print("\n\n".join(map(str, generate(N))))
+    # print("\n".join(reversed([word_into_bin(word, N) for word in generate(N)])))
     # "\n".join([word_into_bin(word, 4) for word in generate(4)])

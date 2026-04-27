@@ -1,4 +1,4 @@
-module register_file #(parameter N=4, parameter Regs=16, parameter Reg_address_bits=4)
+module register_file #(parameter N, parameter Regs, parameter Reg_address_bits)
     (
         input wire CLK,
         input wire rst,
