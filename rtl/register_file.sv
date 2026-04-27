@@ -12,20 +12,20 @@ module register_file #(parameter N=4, parameter Regs=16, parameter Reg_address_b
     reg [7:0] registers [Regs];
     integer i;
 
-    always @(posedge clk) begin
+    always @(*) begin
 
         if (rst) begin
             for (i=0; i<Regs; i=i+1) begin
-                registers[i] <= {8'b0};
+                registers[i] = {8'b0};
             end
         end
         else begin
-            //$display("not resetting, setting stuff");
+            $display("not resetting, setting stuff");
             for (i=0; i<N; i=i+1) begin
                 // ignore 0
                 if (write_sel[i] != 0) begin
-                    //$display("setting %d to %d", write_sel[i], write_data[i]);
-                    registers[write_sel[i]] <= write_data[i];
+                    registers[write_sel[i]] = write_data[i];
+                    $display("setting %d to %d", write_sel[i], write_data[i]);
                 end
             end
         end // else: !if(rst)
