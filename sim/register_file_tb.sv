@@ -7,7 +7,7 @@ module register_file_tb;
     wire [7:0] regs_out [regs];
     logic [7:0] write_data [0:2-1];
     logic [reg_bits-1:0] write_sel [0:2-1];
-    register_file #( 2, regs ) dut (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
+    register_file #( 2, regs ) dut (.CLK(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
     initial begin
         clk = 1'b0;

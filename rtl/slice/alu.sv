@@ -3,9 +3,9 @@ module alu(
         input [3:0]      Operation,
         input [7:0]      A,
         input [7:0]      B,
-        output logic [7:0] Y,
-        output logic      Zero,
-        output logic      Sub_UF
+        output reg [7:0] Y,
+        output       Zero,
+        output       Sub_UF
     );
 `include "incl/ALU_Ops.svh"
 
@@ -15,7 +15,7 @@ module alu(
     always @(*)
     begin
         $display("alu op %d %d %d", Operation, A, B);
-        unique case (Operation)
+        case (Operation)
             ALU_ADD_OP,
             ALU_ADD_IM_OP:
             begin
