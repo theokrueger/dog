@@ -19,7 +19,7 @@ module processor_tb;
     logic [7:0] exp_reg_state [regs];
 
     processor #(.N(n), .Regs(regs)) dut (
-                  .clk(clk),
+                  .CLK(clk),
                   .rst(rst),
                   .word(word),
                   .PC(PC),
@@ -82,7 +82,7 @@ module processor_tb;
         assert_correct({8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0, 8'b0}, 1);
         rst <= 0;
         // source1 source2 dest
-        // 
+        //
         // word = {ALU_ADD_IM_OP, 8'b0, 8'b1101, 8'b1, ALU_NO_OP, 8'b0, 8'b0, 8'b0, 3'b0, 8'b0};
         word = {ALU_ADD_IM_OP, 8'b0, 8'd13, 8'd1, ALU_ADD_IM_OP, 8'b0, 8'd14, 8'd2, 3'b0, 8'b0};
         PC <= 0;

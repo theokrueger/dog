@@ -1,5 +1,5 @@
 module processor #(parameter N=2, parameter Regs=16) (
-        input wire clk,
+        input wire CLK,
         input wire rst,
         input [10+28*N:0] word,
         input [7:0] PC,
@@ -13,12 +13,12 @@ module processor #(parameter N=2, parameter Regs=16) (
     wire [N*8-1:0] As, Bs, Cs;
     wire [2:0] branchop;
     wire [7:0] branchaddr;
-    instruction_decode #(.N(N)) decode (.word(word), .ops(ops), .As(As), .Bs(Bs), .Cs(Cs), .branchop(branchop), .branchaddr(branchaddr));
+    instruction_decode #(.N(N)) decode (.CLK(CLK), .word(word), .ops(ops), .As(As), .Bs(Bs), .Cs(Cs), .branchop(branchop), .branchaddr(branchaddr));
 
     wire [7:0] regs_out [0:Regs-1];
     wire [7:0] write_data [0:N-1];
     wire [reg_bits-1:0] write_sel [0:N-1];
-    register_file #(.N(N), .Regs(Regs), .Reg_address_bits(reg_bits)) rf (.clk(clk), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
+    register_file #(.N(N), .Regs(Regs), .Reg_address_bits(reg_bits)) rf (.CLK(CLK), .rst(rst), .regs_out(regs_out), .write_data(write_data), .write_sel(write_sel));
 
     genvar i;
     wire [7:0] next_PC;
@@ -28,7 +28,7 @@ module processor #(parameter N=2, parameter Regs=16) (
             reg [7:0] B_reg;
             reg [3:0] op_reg;
 
-            always @(posedge clk) begin
+            always @(posedge CLK) begin
                 A_reg <= regs_out[As[8*i+3 : 8*i]];
                 case(ops[4*i+3 : 4*i])
                     ALU_ADD_IM_OP,
@@ -44,7 +44,7 @@ module processor #(parameter N=2, parameter Regs=16) (
             reg alu_zero;
             reg alu_sub_uf;
             alu alu(
-                    .CLK(clk),
+                    .CLK(CLK),
                     .Operation(op_reg),
                     .A(A_reg),
                     .B(B_reg),
