@@ -1,11 +1,12 @@
 module instruction_decode #(parameter N=4) (
+        input wire CLK,
         input [10+28*N:0] word,
 
-        output [N*4-1:0] ops,
-        output [N*8-1:0] As, Bs, Cs,
+        output [N*4-1:0]  ops,
+        output [N*8-1:0]  As, Bs, Cs,
 
-        output [2:0] branchop,
-        output [7:0] branchaddr
+        output [2:0]      branchop,
+        output [7:0]      branchaddr
     );
 
     // sanity check

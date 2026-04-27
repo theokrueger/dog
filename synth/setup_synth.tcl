@@ -25,7 +25,7 @@ set target_library $SYNTH_DIR/gpdk045_slow.db
 set RTL_DIR rtl
 #read_sverilog $RTL_DIR/slice/alu.sv
 #read_sverilog $RTL_DIR/slice/branch_unit.sv
-read_sverilog $RTL_DIR/slice/instruction_decode.sv
+read_sverilog $RTL_DIR/instruction_decode.sv
 #read_sverilog $RTL_DIR/processor.sv
 #read_sverilog $RTL_DIR/register_file.sv
 
