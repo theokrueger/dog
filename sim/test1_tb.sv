@@ -2,7 +2,6 @@
 module test1_tb;
 `include "incl/ISA_Ops.svh"
 `include "incl/ALU_Ops.svh"
-
     localparam regs = 8;
     localparam  reg_bits = $clog2(regs);
     localparam   n = 4;
@@ -13,11 +12,7 @@ module test1_tb;
     logic [10+28*n:0] word;
     logic [7:0] PC;
     logic [7:0] nextPC;
-    wire [7:0] reg_state [regs];
-
-    // expected values for checking
-    logic [7:0] exp_nextPC;
-    logic [7:0] exp_reg_state [regs];
+    wire [8*regs-1:0] reg_state;
 
     processor #(.N(n), .Regs(regs)) dut (
                   .CLK(clk),
@@ -32,7 +27,7 @@ module test1_tb;
     task dump();
         $write("  registers: ");
         for (int i = 0; i < regs; i++) begin
-            $write("    r%0d=%0d ", i, reg_state[i]);
+            $write("    r%0d=%0d ", i, reg_state[8*i +: 8]);
         end
         $write("\n");
     endtask; // dump
@@ -49,7 +44,7 @@ module test1_tb;
     endtask
     task assert_correct(input logic [8*regs-1:0] arr, pc);
         for (int i=0; i<regs; i++) begin
-            assert (arr[8*i +: 8] == reg_state[i]) else fail(arr, pc);
+            assert (arr[8*i +: 8] == reg_state[8*i +: 8]) else fail(arr, pc);
         end
         assert (pc == nextPC) else fail(arr, pc);
     endtask
