@@ -1,6 +1,6 @@
 module register_file #(parameter N=4, parameter Regs=16, parameter Reg_address_bits=4)
     (
-        input wire clk,
+        input wire CLK,
         input wire rst,
         // 15 8-bit registers
         output wire [7:0] regs_out [Regs],
